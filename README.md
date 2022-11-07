@@ -18,6 +18,10 @@ Deve criar uma tela para que seja possível adicionar **LC** para um usuário, c
 
 Pode utilizar qualquer técnologia, desde que o backend tenha `Node.js` (JavaScript) e o front tenha `React`.
 
+## Figma
+
+[Protótipo no   Figma](https://www.figma.com/file/j09y6DJTxpLn2iCEAbmtYj/Untitled?node-id=0%3A1)
+
 
 ## Como participar do teste
 Para participar do teste, clone o repositório em sua máquina, acesse ele pelo terminal e depois rode:
