@@ -18,11 +18,11 @@ enum Roles {
 model Users {
   id       String @id
   name     String
-  email    String
+  email    String @unique
   password String
 
   role          Roles
-  refreshTokens RefreshTokens[]
+  refreshTokens String[]
 }
 
 model Tags {
@@ -44,13 +44,4 @@ model Auctions {
 
   tag   Tags   @relation(fields: [tagId], references: [id])
   tagId String
-}
-
-model RefreshTokens {
-  id        String  @id
-  createdAt Int
-  expiresIn Int
-
-  User     Users  @relation(fields: [userId], references: [id])
-  userId   String
 }

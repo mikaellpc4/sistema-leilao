@@ -4,7 +4,7 @@
   "description": "Servidor para o projeto de leilão",
   "main": "api.js",
   "scripts": {
-    "dev": "tsx src/api.ts"
+    "dev": "tsx watch src/api.ts"
   },
   "repository": {
     "type": "git",
@@ -18,13 +18,19 @@
   "homepage": "https://github.com/jaovito/leilao-test#readme",
   "dependencies": {
     "@prisma/client": "^4.6.0",
-    "@types/express": "^4.17.14",
-    "@types/node": "^18.11.9",
+    "bcrypt": "^5.1.0",
+    "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "tsx": "^3.11.0"
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.14",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.11.9",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
     "eslint": "^8.27.0",
@@ -32,6 +38,7 @@
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.26.0",
     "prisma": "^4.6.0",
+    "tsx": "^3.11.0",
     "typescript": "^4.8.4"
   }
 }

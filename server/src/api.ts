@@ -1,19 +1,21 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
+import apiErrorHandler from '@middlewares/errorHandler';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
-
-console.log(process.env.TEST)
 
 const app = express();
 const port = 3333;
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+app.use(userRoutes);
+
+app.use(apiErrorHandler);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
+
+export default app;
