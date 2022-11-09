@@ -20,6 +20,7 @@ model Users {
   name     String
   email    String @unique
   password String
+  LCoins   Int    @default(0)
 
   role          Roles
   refreshTokens String[]
@@ -35,10 +36,12 @@ model Tags {
 
 model Auctions {
   id          String @id
+  name        String
   imageLink   String
   description String
 
   minimumBid Int
+  soldFor    Int?
   createdAt  String
   endAt      String
 

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Users" ADD COLUMN     "LCoins" INTEGER NOT NULL DEFAULT 0;
