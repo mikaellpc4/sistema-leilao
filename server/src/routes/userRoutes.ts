@@ -1,6 +1,6 @@
 import { loginUserController } from '@useCases/user/loginUser';
 import { registerUserController } from '@useCases/user/registerUser';
-import usersRepository from '@config/repositories';
+import { usersRepository } from '@config/repositories';
 import express from 'express';
 import isAuth from '@middlewares/isAuth';
 

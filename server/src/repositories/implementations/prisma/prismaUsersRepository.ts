@@ -37,7 +37,7 @@ export default class PrismaUserRepository implements IUserRepository {
     return findedUsers;
   }
 
-  async save(user: User): Promise<User | null> {
+  async save(user: User): Promise<void> {
     const id = user.getId() as string;
     const role = user.getRole() as Role;
     const {
@@ -45,7 +45,7 @@ export default class PrismaUserRepository implements IUserRepository {
       email,
       password,
     } = user.getData();
-    const newUser = await prisma.users.create({
+    await prisma.users.create({
       data: {
         id,
         name,
@@ -54,10 +54,6 @@ export default class PrismaUserRepository implements IUserRepository {
         role,
       },
     });
-    if (newUser) {
-      return new User(newUser);
-    }
-    return null;
   }
 
   async login(email: string, password: string): Promise<User | null> {

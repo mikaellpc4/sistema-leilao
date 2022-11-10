@@ -1,7 +1,8 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import apiErrorHandler from '@middlewares/errorHandler';
-import userRoutes from './routes/userRoutes';
+import adminRoutes from '@routes/adminRoutes';
+import userRoutes from '@routes/userRoutes';
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ const port = 3333;
 app.use(express.json());
 
 app.use(userRoutes);
+
+app.use(adminRoutes);
 
 app.use(apiErrorHandler);
 

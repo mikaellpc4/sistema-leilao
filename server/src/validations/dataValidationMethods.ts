@@ -1,4 +1,4 @@
-import usersRepository from '@config/repositories';
+import { usersRepository, tagsRepository } from '@config/repositories';
 
 const isValid = {
   // Hegex logics
@@ -16,6 +16,24 @@ const exists = {
     }
     return false;
   },
+  async tagId(tagId: string) {
+    if (await tagsRepository.getTagById(tagId) !== null) {
+      return true;
+    }
+    return false;
+  },
+  async tagName(tagName: string) {
+    if (await tagsRepository.getTagByName(tagName) !== null) {
+      return true;
+    }
+    return false;
+  },
 };
 
-export { isValid, exists };
+const using = {
+  async tag(tagId: string) {
+    return false;
+  },
+};
+
+export { isValid, exists, using };
