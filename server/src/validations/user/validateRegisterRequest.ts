@@ -1,7 +1,7 @@
 import ApiError from '@controllers/errorController';
 import IRegisterUserRequestDTO from 'useCases/user/registerUser/registerUserDTO';
-import { isValid, exists } from './dataValidationMethods';
-import validateTypes from './validateTypes';
+import { isValid, exists } from '@validations/dataValidationMethods';
+import validateTypes from '@validations/validateTypes';
 
 const validateRegisterRequest = async (
   next: Next,

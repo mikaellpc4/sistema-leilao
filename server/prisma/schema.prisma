@@ -42,14 +42,14 @@ model Auctions {
   description String
 
   minimumBid Int
-  actualBid  Int
+  actualBid  Int?
 
   soldFor Int?
-  soldTo  Users?  @relation(fields: [userId], references: [id])
-  userId  String?
+  soldTo  Users?  @relation(fields: [buyerId], references: [id])
+  buyerId  String?
 
-  createdAt String
-  endAt     String?
+  createdAt Int
+  endAt     Int
 
   tag   Tags?  @relation(fields: [tagId], references: [id])
   tagId String?

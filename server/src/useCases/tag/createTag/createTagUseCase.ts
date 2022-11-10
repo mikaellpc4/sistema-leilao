@@ -1,6 +1,6 @@
 import Tag from '@entities/tag';
 import ITagsRepository from '@repositories/ITagsRepository';
-import validateCreateTagRequest from '@validations/validateCreateTagRequest';
+import validateCreateTagRequest from '@validations/tag/validateCreateTagRequest';
 import ICreateTagRequestDTO from './createTagDTO';
 
 export default class CreateTagUserUseCase {

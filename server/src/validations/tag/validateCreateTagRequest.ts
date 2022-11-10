@@ -1,7 +1,7 @@
 import ApiError from '@controllers/errorController';
 import ICreateTagRequestDTO from 'useCases/tag/createTag/createTagDTO';
-import { exists } from './dataValidationMethods';
-import validateTypes from './validateTypes';
+import { exists } from '@validations/dataValidationMethods';
+import validateTypes from '@validations/validateTypes';
 
 const validateCreateTagRequest = async (
   next: Next,

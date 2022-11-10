@@ -1,4 +1,4 @@
-import { usersRepository, tagsRepository } from '@config/repositories';
+import { usersRepository, tagsRepository, auctionsRepository } from '@config/repositories';
 
 const isValid = {
   // Hegex logics
@@ -28,6 +28,9 @@ const exists = {
     }
     return false;
   },
+  async auctionId(auctionId: string) {
+    return auctionsRepository.auctionIsFinished(auctionId);
+  },
 };
 
 const using = {
@@ -36,4 +39,12 @@ const using = {
   },
 };
 
-export { isValid, exists, using };
+const finished = {
+  async auctionId(auctionId: string) {
+    return auctionsRepository.auctionIsFinished(auctionId);
+  },
+};
+
+export {
+  isValid, exists, using, finished,
+};

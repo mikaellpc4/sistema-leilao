@@ -1,6 +1,5 @@
 import { v4 } from 'uuid';
-import Tag from './tag';
-import User from './user';
+import dayjs from 'dayjs';
 
 interface AuctionProps {
   id?: string;
@@ -9,15 +8,15 @@ interface AuctionProps {
   description: string;
 
   minimumBid: number;
-  actualBid?: number;
+  actualBid?: number | null;
 
-  soldFor?: number;
-  soldTo: User;
+  soldFor?: number | null;
+  buyerId?: string | null;
 
-  createdAt: string;
-  endAt: string;
+  createdAt?: number | null;
+  endAt: number;
 
-  tag: Tag;
+  tagId?: string | null;
 }
 
 export default class Auction {
@@ -25,7 +24,17 @@ export default class Auction {
 
   constructor(props: AuctionProps) {
     if (!props.id) {
-      const finalProps = { ...props, id: v4() };
+      let finalProps = {
+        ...props,
+        id: v4(),
+        actualBid: null,
+        soldFor: null,
+        buyerId: null,
+        createdAt: dayjs().unix(),
+      };
+      if (typeof props.tagId === 'undefined') {
+        finalProps = { ...finalProps, tagId: null };
+      }
       this.props = finalProps;
       return;
     }
@@ -42,5 +51,9 @@ export default class Auction {
 
   getName() {
     return this.props.name;
+  }
+
+  getCreatedAt() {
+    return this.props.createdAt;
   }
 }

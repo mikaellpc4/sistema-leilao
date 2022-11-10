@@ -1,6 +1,6 @@
 import { loginUserController } from '@useCases/user/loginUser';
 import { registerUserController } from '@useCases/user/registerUser';
-import { usersRepository } from '@config/repositories';
+import { auctionsRepository, usersRepository } from '@config/repositories';
 import express from 'express';
 import isAuth from '@middlewares/isAuth';
 
@@ -28,10 +28,9 @@ userRouter.get('/authenticate', isAuth, (req, res, next) => {
   res.status(200).json({ message: 'Autenticado' });
 });
 
-// Only for tests
-userRouter.get('/user/get', async (req, res) => {
-  const users = await usersRepository.getUsers();
-  return res.status(200).json({ message: 'Usuarios', users });
+userRouter.get('/auctions', async (req, res) => {
+  const auctions = await auctionsRepository.getAuctions();
+  return res.status(200).json(auctions);
 });
 
 export default userRouter;

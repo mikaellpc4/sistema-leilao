@@ -1,5 +1,5 @@
 import ApiError from '@controllers/errorController';
-import { exists, using } from './dataValidationMethods';
+import { exists, using } from '@validations/dataValidationMethods';
 
 const validateDeleteTagRequest = async (
   next: Next,

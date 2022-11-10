@@ -1,7 +1,7 @@
 import ApiError from '@controllers/errorController';
 import ILoginUserRequestDTO from 'useCases/user/loginUser/loginUserDTO';
-import { exists, isValid } from './dataValidationMethods';
-import validateTypes from './validateTypes';
+import { exists, isValid } from '@validations/dataValidationMethods';
+import validateTypes from '@validations/validateTypes';
 
 const validateLoginRequest = async (
   next: Next,

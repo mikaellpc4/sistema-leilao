@@ -1,4 +1,4 @@
-import usersRepository from '@config/repositories';
+import { usersRepository } from '@config/repositories';
 import RegisterUserController from './registerUserController';
 import RegisterUserUseCase from './registerUserUseCase';
 

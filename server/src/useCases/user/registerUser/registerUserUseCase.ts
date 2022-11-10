@@ -1,6 +1,6 @@
 import User from '@entities/user';
 import IUsersRepository from '@repositories/IUsersRepository';
-import validateRegisterRequest from '@validations/validateRegisterRequest';
+import validateRegisterRequest from '@validations/user/validateRegisterRequest';
 import bcrypt from 'bcrypt';
 import IRegisterUserRequestDTO from './registerUserDTO';
 

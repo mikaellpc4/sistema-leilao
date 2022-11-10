@@ -3,7 +3,7 @@ const validateTypes = (recievedObject: any, validObject: any) => {
   if (typeof recievedObject !== typeof validObject) return false;
   let isValid = false;
   Object.keys(recievedObject).some((key) => {
-    if (typeof recievedObject[key] !== typeof validObject[key]) {
+    if (typeof recievedObject[key] !== validObject[key]) {
       isValid = false;
       return true;
     }

@@ -1,7 +1,7 @@
 import ApiError from '@controllers/errorController';
 import generateToken from '@controllers/generateToken';
 import IUsersRepository from '@repositories/IUsersRepository';
-import validateLoginRequest from '@validations/validateLoginRequest';
+import validateLoginRequest from '@validations/user/validateLoginRequest';
 import ILoginRequestDTO from './loginUserDTO';
 
 export default class LoginUserUseCase {

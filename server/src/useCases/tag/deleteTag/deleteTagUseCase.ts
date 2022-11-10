@@ -1,6 +1,5 @@
-import ApiError from '@controllers/errorController';
 import ITagsRepository from '@repositories/ITagsRepository';
-import validateDeleteTagRequest from '@validations/validateDeleteTagRequest';
+import validateDeleteTagRequest from '@validations/tag/validateDeleteTagRequest';
 
 export default class DeleteTagUseCase {
   constructor(
