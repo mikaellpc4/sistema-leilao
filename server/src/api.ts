@@ -11,9 +11,9 @@ const port = 3333;
 
 app.use(express.json());
 
-app.use(userRoutes);
-
 app.use(adminRoutes);
+
+app.use(userRoutes);
 
 app.use(apiErrorHandler);
 

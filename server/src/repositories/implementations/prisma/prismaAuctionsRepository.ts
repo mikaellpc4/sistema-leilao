@@ -88,4 +88,28 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
       },
     });
   }
+
+  async checkActualBid(auctionId: string): Promise<number> {
+    const { actualBid } = await prisma.auctions.findUnique({
+      where: {
+        id: auctionId,
+      },
+      select: {
+        actualBid: true,
+      },
+    }) as { actualBid: number };
+    return actualBid;
+  }
+
+  async usingTag(tagId: string): Promise<boolean> {
+    const auctions = await prisma.auctions.findMany({
+      where: {
+        tagId,
+      },
+    });
+    if (auctions) {
+      return true;
+    }
+    return false;
+  }
 }

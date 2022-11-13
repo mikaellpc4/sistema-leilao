@@ -9,6 +9,9 @@ interface IAuctionsRepository {
   finish(auctionId: string): Promise<void>
 
   addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<void>
+  checkActualBid(auctionId: string): Promise<number>
+
+  usingTag(tagId: string): Promise<boolean>
 }
 
 export default IAuctionsRepository;

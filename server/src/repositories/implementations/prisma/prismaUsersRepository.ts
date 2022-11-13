@@ -121,4 +121,42 @@ export default class PrismaUserRepository implements IUserRepository {
       });
     }
   }
+
+  async addLCoins(userId: string, LCoins: number): Promise<void> {
+    await prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        LCoins: {
+          increment: LCoins,
+        },
+      },
+    });
+  }
+
+  async removeCoins(userId: string, LCoins: number): Promise<void> {
+    await prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        LCoins: {
+          decrement: LCoins,
+        },
+      },
+    });
+  }
+
+  async checkUserBalance(userId: string): Promise<number> {
+    const { LCoins } = await prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        LCoins: true,
+      },
+    }) as { LCoins: number };
+    return LCoins;
+  }
 }

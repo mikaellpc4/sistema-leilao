@@ -14,6 +14,11 @@ interface IUsersRepository {
   // Tokens
   addRefreshToken(userId: string, refreshToken: string): Promise<void>
   removeRefreshToken(refreshToken: string): Promise<void>
+
+  // LCoins
+  addLCoins(userId: string, LCoins: number): Promise<void>
+  removeCoins(userId: string, LCoins: number): Promise<void>
+  checkUserBalance(userId: string): Promise<number>
 }
 
 export default IUsersRepository;

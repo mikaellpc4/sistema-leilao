@@ -10,6 +10,12 @@ const isValid = {
 };
 
 const exists = {
+  async userId(userId: string) {
+    if (await usersRepository.getUserById(userId) !== null) {
+      return true;
+    }
+    return false;
+  },
   async email(email: string) {
     if (await usersRepository.getUserByEmail(email) !== null) {
       return true;
@@ -35,7 +41,7 @@ const exists = {
 
 const using = {
   async tag(tagId: string) {
-    return false;
+    return auctionsRepository.usingTag(tagId);
   },
 };
 
