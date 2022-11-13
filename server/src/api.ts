@@ -3,11 +3,16 @@ import * as dotenv from 'dotenv';
 import apiErrorHandler from '@middlewares/errorHandler';
 import adminRoutes from '@routes/adminRoutes';
 import userRoutes from '@routes/userRoutes';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 const port = 3333;
+
+app.use(cors({
+  origin: '*',
+}));
 
 app.use(express.json());
 
