@@ -3,6 +3,9 @@ import { registerUserController } from '@useCases/user/registerUser';
 import { auctionsRepository, usersRepository } from '@config/repositories'; import express from 'express';
 import { addBidController } from '@useCases/user/addBid';
 import isAuth from '@middlewares/isAuth';
+import prisma from 'services/database';
+import ApiError from '@controllers/errorController';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 const userRoutes = express.Router();
 
@@ -22,6 +25,26 @@ userRoutes.post('/user/login', async (req, res, next) => {
     return res.status(200).json({ message: 'Logado com sucesso', refreshToken });
   }
   return null;
+});
+
+userRoutes.get('/user/:id', async (req, res, next) => {
+  const { id } = req.params;
+  if (typeof id === 'string') {
+    const user = await prisma.users.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        name: true,
+        role: true,
+        LCoins: true
+      }
+    });
+    if (user) {
+      return res.status(200).json(user);
+    } 
+  }
+  return res.status(404).json('Usuario não encontrado');
 });
 
 userRoutes.get('/authenticate', isAuth, (req, res, next) => {
