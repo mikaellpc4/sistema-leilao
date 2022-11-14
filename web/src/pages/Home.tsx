@@ -4,12 +4,12 @@ import getServerSideProps from "../services/GetServerSideProps"
 
 
 const Home = () => {
-  const { data: auctions } = getServerSideProps<auctions[]>('/auctions')
+  const { data: auctions } = getServerSideProps<IAuctions[]>('/auctions')
 
   return (
     <div>
       <Carousel />
-      <div className="px-5 py-6 flex flex-col gap-5">
+      <div className="px-3 py-6 flex flex-col gap-5">
         <h1 className='font-bold text-2xl'> Leilões em andamento </h1>
         {auctions?.map((auction) => {
           return (

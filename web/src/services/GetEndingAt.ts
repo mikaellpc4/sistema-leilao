@@ -15,10 +15,14 @@ const GetEndingAt = (endAt: number) => {
   }
   duration.format('D/HH/mm/ss').split('/').map((num,index) => {
     switch(index){
-      case 0: endingAt.days = num
-      case 1: endingAt.hours = num
-      case 2: endingAt.minutes = num
-      case 3: endingAt.seconds = num
+      case 0: endingAt.days = num 
+        break
+      case 1: endingAt.hours = num 
+        break
+      case 2: endingAt.minutes = num 
+        break
+      case 3: endingAt.seconds = num 
+        break
     }
   })
   return endingAt

@@ -1,4 +1,4 @@
-interface auctions {
+interface IAuctions {
   props: {
     id: string,
     name: string,
@@ -6,7 +6,8 @@ interface auctions {
     description: string,
     minimumBid: number,
     actualBid: number | null,
-    buyerName: string | null,
+    buyerId: string | null,
+    buyer: { id: string, name: string }
     soldTo: string | null,
     createdAt: number,
     endAt: number,
