@@ -1,26 +1,28 @@
 import { loginUserController } from '@useCases/user/loginUser';
 import { registerUserController } from '@useCases/user/registerUser';
-import { auctionsRepository, usersRepository } from '@config/repositories'; import express from 'express';
+import { auctionsRepository, usersRepository } from '@config/repositories';
+import express from 'express';
 import { addBidController } from '@useCases/user/addBid';
 import isAuth from '@middlewares/isAuth';
 import prisma from 'services/database';
+import jwt from 'jsonwebtoken';
 
 const userRoutes = express.Router();
 
 userRoutes.get('/', (req, res) => res.status(200).json({ message: 'API de leilão' }));
 
 userRoutes.post('/user/register', async (req, res, next) => {
-  const refreshToken = await registerUserController.handle(req, res, next);
+  const tokens = await registerUserController.handle(req, res, next);
   if (res.headersSent === false) {
-    return res.status(200).json({ message: 'Registrado com sucesso', refreshToken });
+    return res.status(200).json({ message: 'Registrado com sucesso', tokens });
   }
   return null;
 });
 
 userRoutes.post('/user/login', async (req, res, next) => {
-  const refreshToken = await loginUserController.handle(req, next);
+  const tokens = await loginUserController.handle(req, next);
   if (res.headersSent === false) {
-    return res.status(200).json({ message: 'Logado com sucesso', refreshToken });
+    return res.status(200).json({ message: 'Logado com sucesso', tokens });
   }
   return null;
 });
@@ -45,8 +47,13 @@ userRoutes.get('/user/:id', async (req, res, next) => {
   return res.status(404).json('Usuario não encontrado');
 });
 
-userRoutes.get('/authenticate', isAuth, (req, res, next) => {
-  res.status(200).json({ message: 'Autenticado' });
+userRoutes.get('/authenticate', isAuth, async (req, res, next) => {
+  const acessToken = req.headers.acesstoken as string;
+  const acessSecret = process.env.ACESS_SECRET as string;
+  const { userId } = jwt.verify(acessToken, acessSecret) as { userId: string };
+  const user = await usersRepository.getUserById(userId);
+  const userData = user?.getData();
+  return res.status(200).json({ message: 'Autenticado', userData });
 });
 
 userRoutes.get('/auctions', async (req, res) => {

@@ -1,5 +1,7 @@
+import { usersRepository } from '@config/repositories';
 import generateToken from '@controllers/generateToken';
 import validateToken from '@controllers/validateToken';
+import jwt from 'jsonwebtoken';
 
 const isAuth = async (req: Req, res: Res, next: Next) => {
   const acessToken = req.headers.acesstoken as string;
@@ -20,6 +22,15 @@ const isAuth = async (req: Req, res: Res, next: Next) => {
         return res.status(401).json({ message: 'Sessão encerrada' });
       }
       case 'TokenExpiredError': {
+        const refreshSecret = process.env.REFRESH_SECRET as string;
+        const tokenData = jwt.verify(refreshToken, refreshSecret) as { userId: string };
+        const { userId } = tokenData;
+        const findedUser = await usersRepository.getUserById(userId);
+        if (findedUser?.getRefreshTokens()?.includes(refreshToken)) {
+          const newRefreshToken = generateToken.refresh(findedUser);
+          await usersRepository.removeRefreshToken(refreshToken);
+          return res.status(401).json({ newRefreshToken });
+        }
         return res.status(401).json({ message: 'Sessão expirada' });
       }
       default: {

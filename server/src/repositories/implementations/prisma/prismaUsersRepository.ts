@@ -12,6 +12,13 @@ export default class PrismaUserRepository implements IUserRepository {
       where: {
         id,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        LCoins: true,
+        role: true,
+      },
     });
     if (user) {
       return new User(user);
@@ -44,7 +51,11 @@ export default class PrismaUserRepository implements IUserRepository {
       name,
       email,
       password,
-    } = user.getData();
+    } = user.getData() as {
+      name: string,
+      email: string,
+      password: string
+    };
     await prisma.users.create({
       data: {
         id,

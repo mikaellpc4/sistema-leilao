@@ -1,4 +1,4 @@
-import usersRepository from '@config/repositories';
+import { usersRepository } from '@config/repositories';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 
 const validateToken = {

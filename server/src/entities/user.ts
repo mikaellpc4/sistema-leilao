@@ -4,7 +4,7 @@ interface UserProps {
   id?: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   LCoins?: number;
   refreshTokens?: string[];
   role?: Role;
