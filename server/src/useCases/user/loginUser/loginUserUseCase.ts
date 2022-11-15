@@ -12,7 +12,7 @@ export default class LoginUserUseCase {
   async execute(
     next: Next,
     data: ILoginRequestDTO,
-  ): Promise<{ acessToken: string, refreshToken: string } | null> {
+  ): Promise<{ refresh: string, acess: string } | null> {
     if (await validateLoginRequest(next, data)) {
       const {
         email,
@@ -24,10 +24,10 @@ export default class LoginUserUseCase {
         return null;
       }
       const userId = loggedUser.getId() as string;
-      const refreshToken = generateToken.refresh(loggedUser);
-      await this.usersRepository.addRefreshToken(userId, refreshToken);
-      const acessToken = generateToken.acess(refreshToken);
-      const tokens = { acessToken, refreshToken };
+      const refresh = generateToken.refresh(loggedUser);
+      await this.usersRepository.addRefreshToken(userId, refresh);
+      const acess = generateToken.acess(refresh);
+      const tokens = { refresh, acess };
       return tokens;
     }
     return null;

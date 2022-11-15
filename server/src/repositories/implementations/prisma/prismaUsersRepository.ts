@@ -29,7 +29,7 @@ export default class PrismaUserRepository implements IUserRepository {
   async getUserByEmail(email: string): Promise<User | null> {
     const user = await prisma.users.findUnique({
       where: {
-        email,
+        email: email.toLowerCase(),
       },
     });
     if (user) {
@@ -60,7 +60,7 @@ export default class PrismaUserRepository implements IUserRepository {
       data: {
         id,
         name,
-        email,
+        email: email.toLowerCase(),
         password,
         role,
       },
@@ -70,7 +70,7 @@ export default class PrismaUserRepository implements IUserRepository {
   async login(email: string, password: string): Promise<User | null> {
     const user = await prisma.users.findUnique({
       where: {
-        email,
+        email: email.toLowerCase(),
       },
     });
     if (user) {

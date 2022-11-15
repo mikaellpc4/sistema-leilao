@@ -6,7 +6,7 @@ export default class LoginUserController {
     private loginUserUseCase: LoginUserUseCase,
   ) { }
 
-  async handle(req: Req, next: Next): Promise<{ acessToken: string, refreshToken: string } | null> {
+  async handle(req: Req, next: Next): Promise<{ refresh: string, acess: string } | null> {
     const data: ILoginUserRequestDTO = req.body;
     return this.loginUserUseCase.execute(next, data);
   }

@@ -14,7 +14,7 @@ export default class RegisterUserUseCase {
   async execute(
     next: Next,
     data: IRegisterUserRequestDTO,
-  ): Promise<{acessToken:string, refreshToken: string} | null> {
+  ): Promise<{refresh:string, acess: string} | null> {
     if (await validateRegisterRequest(next, data)) {
       const {
         name,
