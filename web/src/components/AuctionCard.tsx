@@ -77,7 +77,7 @@ const AuctionCard = ({ props }: IAuctions) => {
         </div>
         <div className="font-bold">
           <h3 className="text-lg"> Ultimo Lance: </h3>
-          {isFinished(endingIn) && props.actualBid !== null && props.actualBid > 0
+          {props.buyer !== null
             ?
             <>
               <span className="text-purple-400 text-xl">

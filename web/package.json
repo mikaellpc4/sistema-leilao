@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@unform/core": "^2.1.6",
+    "@unform/web": "^2.1.6",
     "axios": "^1.1.3",
     "dayjs": "^1.11.6",
     "react": "^18.2.0",
