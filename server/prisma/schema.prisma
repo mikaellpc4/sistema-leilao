@@ -44,13 +44,12 @@ model Auctions {
   minimumBid Int
   actualBid  Int?
 
-  soldFor Int?
-  soldTo  Users?  @relation(fields: [buyerId], references: [id])
-  buyerId  String?
+  buyer   Users?  @relation(fields: [buyerId], references: [id])
+  buyerId String?
 
   createdAt Int
   endAt     Int
 
-  tag   Tags?  @relation(fields: [tagId], references: [id])
+  tag   Tags?   @relation(fields: [tagId], references: [id])
   tagId String?
 }

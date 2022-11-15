@@ -8,7 +8,16 @@ const prisma = new PrismaClient();
 
 export default class PrismaAuctionsRepository implements IAuctionsRepository {
   async getAuctions(): Promise<Auction[]> {
-    const auctions = await prisma.auctions.findMany();
+    const auctions = await prisma.auctions.findMany({
+      include: {
+        buyer: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
     return auctions.map((auction) => new Auction(auction));
   }
 
@@ -16,6 +25,14 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
     const auction = await prisma.auctions.findUnique({
       where: {
         id,
+      },
+      include: {
+        buyer: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
     if (auction) {
@@ -44,7 +61,6 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
       description,
       minimumBid,
       actualBid,
-      soldFor,
       buyerId,
       endAt,
       tagId,
@@ -57,7 +73,6 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
         description,
         minimumBid,
         actualBid,
-        soldFor,
         buyerId,
         createdAt,
         endAt,
@@ -78,6 +93,24 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
   }
 
   async addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<void> {
+    const auction = await prisma.auctions.findUnique({
+      where: {
+        id: auctionId,
+      },
+    });
+    if (auction?.buyerId) {
+      // Refund the previous buyer
+      await prisma.users.update({
+        where: {
+          id: auction.buyerId,
+        },
+        data: {
+          LCoins: {
+            increment: auction.actualBid as number,
+          },
+        },
+      });
+    }
     await prisma.auctions.update({
       where: {
         id: auctionId,
@@ -85,6 +118,16 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
       data: {
         actualBid: bidValue,
         buyerId: bidUserId,
+      },
+    });
+    await prisma.users.update({
+      where: {
+        id: bidUserId,
+      },
+      data: {
+        LCoins: {
+          decrement: bidValue,
+        },
       },
     });
   }

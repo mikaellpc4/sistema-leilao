@@ -53,7 +53,7 @@ const validateRegisterRequest = async (
   }
 
   if (password === '') {
-    next(ApiError.badRequest('A senha deve possuir no minimo 8 caracters'));
+    next(ApiError.badRequest('A senha é obrigatoria'));
     return false;
   }
 

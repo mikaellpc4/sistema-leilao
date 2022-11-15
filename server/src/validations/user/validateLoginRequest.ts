@@ -23,7 +23,7 @@ const validateLoginRequest = async (
   }
 
   if (email === '') {
-    next(ApiError.badRequest('O login é obrigatorio'));
+    next(ApiError.badRequest('O email é obrigatorio'));
     return false;
   }
 

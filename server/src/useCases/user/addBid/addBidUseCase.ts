@@ -14,7 +14,7 @@ export default class DoABidUseCase {
     if (await validateAddBidRequest(next, data)) {
       const { auctionId, bidValue, bidUserId } = data;
       await this.auctionsRepository.addBid(auctionId, bidValue, bidUserId);
-      return data.bidValue;
+      return data.bidValue / 100;
     }
     return null;
   }
