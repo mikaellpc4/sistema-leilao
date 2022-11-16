@@ -1,56 +1,21 @@
-import { useState, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { HiOutlineMail } from 'react-icons/hi'
 import { CgLock } from 'react-icons/cg'
 import Input from '../components/Input'
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
-import Api from '../services/Api'
+import AuthContext from '../context/AuthProvider'
+import { Navigate } from 'react-router-dom'
 
 const Login = () => {
-
   const formRef = useRef<FormHandles>(null)
+  const { signIn, user } = useContext(AuthContext);
 
-  interface ILoginRequest {
-    email: string,
-    password: string
+  const handleSubmit = async (data: ILoginRequest) => {
+    signIn(data, formRef)
   }
 
-  const handleSubmit = (data: ILoginRequest) => {
-    formRef.current?.setErrors({})
-    Api.post('/user/login', data)
-      .then((res) => console.log(res.data))
-      .catch((e) => {
-        const error = e.response
-        if (error.status !== 400) {
-          alert('Ocorreu um erro do nosso lado, tente novamente mais tarde')
-          return
-        }
-        switch (error.data) {
-          case 'Dados invalidos':
-            formRef.current?.setErrors({
-              email: error.data,
-              password: error.data
-            })
-            break
-          case 'O email é obrigatorio':
-            formRef.current?.setFieldError('email', error.data)
-            break
-          case 'A senha é obrigatoria':
-            formRef.current?.setFieldError('password', error.data)
-            break
-          case 'O email não é valido':
-            formRef.current?.setFieldError('email', error.data)
-            break
-          case 'Email ou senha incorreto(os)':
-            formRef.current?.setErrors({
-              email: error.data,
-              password: error.data
-            })
-            break
-        }
-      })
-  }
-
+  if(user.name) return <Navigate to='/' />
   return (
     <Form ref={formRef} onSubmit={handleSubmit}
       className="

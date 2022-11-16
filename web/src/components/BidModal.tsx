@@ -1,6 +1,8 @@
 import { GrFormClose } from 'react-icons/gr'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Api from '../services/Api'
+import AuthContext from '../context/AuthProvider'
+import { Navigate } from 'react-router-dom'
 
 interface IBidModal {
   isOpen: boolean,
@@ -15,6 +17,8 @@ interface IBidModal {
 
 
 const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
+
+  const { user } = useContext(AuthContext);
 
   const [bidValue, setBidValue] = useState('LC 0,00')
 
@@ -40,13 +44,16 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
     Api.post('/auction/bid', {
       auctionId: auction.id,
       bidValue: normalizedBidValue,
-      bidUserId: '9ecbad02-27ba-4a80-99e2-964f495d9738'
+      bidUserId: user.id
     })
       .then((res) => console.log(res.data))
       .catch((e) => console.log(e.response))
   }
 
   if (!isOpen) return null
+
+  if (user.name === '') return <Navigate to='/user/login' />
+
   return (
     <form>
       <div className='fixed inset-0 h-screen bg-black bg-opacity-50 z-40'></div>
