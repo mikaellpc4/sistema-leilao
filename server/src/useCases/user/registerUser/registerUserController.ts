@@ -6,8 +6,8 @@ export default class RegisterUserController {
     private registerUserUseCase: RegisterUserUseCase,
   ) { }
 
-  async handle(req: Req, res: Res, next: Next): Promise<{ refresh: string, acess: string } | null> {
+  async handle(req: Req, res: Res, next: Next): Promise<void> {
     const data: IRegisterUserRequestDTO = req.body;
-    return this.registerUserUseCase.execute(next, data);
+    await this.registerUserUseCase.execute(next, data);
   }
 }

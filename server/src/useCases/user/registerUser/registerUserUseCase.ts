@@ -14,7 +14,7 @@ export default class RegisterUserUseCase {
   async execute(
     next: Next,
     data: IRegisterUserRequestDTO,
-  ): Promise<{refresh:string, acess: string} | null> {
+  ): Promise<void> {
     if (await validateRegisterRequest(next, data)) {
       const {
         name,
@@ -29,8 +29,6 @@ export default class RegisterUserUseCase {
         role: 'USER',
       });
       await this.usersRepository.save(newUser);
-      return this.loginUserUseCase.execute(next, { email, password });
     }
-    return null;
   }
 }

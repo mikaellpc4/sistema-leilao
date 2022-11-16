@@ -12,9 +12,9 @@ const userRoutes = express.Router();
 userRoutes.get('/', (req, res) => res.status(200).json({ message: 'API de leilão' }));
 
 userRoutes.post('/user/register', async (req, res, next) => {
-  const tokens = await registerUserController.handle(req, res, next);
+  await registerUserController.handle(req, res, next);
   if (res.headersSent === false) {
-    return res.status(200).json({ message: 'Registrado com sucesso', tokens });
+    return res.status(200).json({ message: 'Registrado com sucesso' });
   }
   return null;
 });
