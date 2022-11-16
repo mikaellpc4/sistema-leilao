@@ -33,7 +33,7 @@ userRoutes.post('/user/logout', isAuth, async (req, res) => {
   res.status(200).json({ message: 'Deslogado com sucesso' });
 });
 
-userRoutes.get('/user/:id', async (req, res, next) => {
+userRoutes.get('/user/:id', async (req, res) => {
   const { id } = req.params;
   if (typeof id === 'string') {
     const user = await prisma.users.findUnique({
@@ -53,7 +53,7 @@ userRoutes.get('/user/:id', async (req, res, next) => {
   return res.status(404).json('Usuario não encontrado');
 });
 
-userRoutes.get('/authenticate', isAuth, async (req, res, next) => {
+userRoutes.get('/authenticate', isAuth, async (req, res) => {
   const acessToken = req.headers.acesstoken as string;
   const acessSecret = process.env.ACESS_SECRET as string;
   const { userId } = jwt.verify(acessToken, acessSecret) as { userId: string };

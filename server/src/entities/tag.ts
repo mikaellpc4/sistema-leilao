@@ -1,5 +1,4 @@
 import { v4 } from 'uuid';
-import Auction from './auction';
 
 interface TagProps {
   id?: string;

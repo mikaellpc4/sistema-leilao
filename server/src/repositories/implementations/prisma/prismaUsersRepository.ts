@@ -1,4 +1,3 @@
-import ApiError from '@controllers/errorController';
 import User from '@entities/user';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import IUserRepository from '@repositories/IUsersRepository';

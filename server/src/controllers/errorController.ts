@@ -8,7 +8,7 @@ class ApiError {
     this.message = message;
   }
 
-  static Unauthorized(msg: string) {
+  static unauthorized(msg: string) {
     return new ApiError(401, msg);
   }
 

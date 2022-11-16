@@ -5,7 +5,6 @@ import { createAuctionController } from '@useCases/auction/createAuction';
 import { finishAuctionController } from '@useCases/auction/finishAuction';
 import { createTagController } from '@useCases/tag/createTag';
 import { deleteTagController } from '@useCases/tag/deleteTag';
-import { addBidController } from '@useCases/user/addBid';
 import express from 'express';
 
 const adminRoutes = express.Router();
@@ -30,15 +29,14 @@ adminRoutes.get('/user/balance', async (req, res) => {
 
 adminRoutes.post('/admin/addLCoins', isAuth, async (req, res, next) => {
   const { userId, LCoins, admin } = req.body;
+  if (!admin) return next(ApiError.unauthorized('Você não tem permissão para fazer isso'));
   if (!userId) return next(ApiError.badRequest('O ID do usuário é obrigatorio'));
   if (await usersRepository.getUserById(userId) === null) next(ApiError.badRequest('O usuário não existe'));
   if (!LCoins) return next(ApiError.badRequest('A quantidade de LCoins é obrigatoria'));
   if (LCoins <= 0) return next(ApiError.badRequest('A quantidade de LCoins deve ser maior que 0,00'));
-  if (admin) {
-    await usersRepository.addLCoins(userId, LCoins * 100);
-    return res.status(200).json('LCoins adicionadas com sucesso');
-  }
-  return res.status(401).json('Você não tem permissão para fazer isso');
+
+  await usersRepository.addLCoins(userId, LCoins * 100);
+  return res.status(200).json('LCoins adicionadas com sucesso');
 });
 
 adminRoutes.post('/tag/create', async (req, res, next) => {
@@ -73,6 +71,5 @@ adminRoutes.post('/auction/finish', async (req, res, next) => {
   }
   return null;
 });
-
 
 export default adminRoutes;
