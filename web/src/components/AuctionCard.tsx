@@ -34,7 +34,10 @@ const AuctionCard = ({ props }: IAuctions) => {
     setCreatedAt(new Date(props.createdAt * 1000).toLocaleDateString())
     if (props.buyer) {
       const fullBuyerName = props.buyer?.name.split(' ')
-      setBuyerName(`${fullBuyerName[0]} ${fullBuyerName[1]}`)
+      if (fullBuyerName.length > 1) {
+        setBuyerName(`${fullBuyerName[0]} ${fullBuyerName[1]}`)
+      }
+      setBuyerName(props.buyer.name)
     }
     if (props.actualBid) {
       setBidValue(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(props.actualBid / 100))
