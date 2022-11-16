@@ -1,4 +1,6 @@
 import { tagsRepository, usersRepository } from '@config/repositories';
+import ApiError from '@controllers/errorController';
+import isAuth from '@middlewares/isAuth';
 import { createAuctionController } from '@useCases/auction/createAuction';
 import { finishAuctionController } from '@useCases/auction/finishAuction';
 import { createTagController } from '@useCases/tag/createTag';
@@ -26,10 +28,17 @@ adminRoutes.get('/user/balance', async (req, res) => {
   return res.status(200).json(balance);
 });
 
-adminRoutes.post('/user/addLCoins', async (req, res) => {
-  const { userId, LCoins } = req.body;
-  await usersRepository.addLCoins(userId, LCoins);
-  return res.status(200).json('LCoins adicionadas com sucesso');
+adminRoutes.post('/admin/addLCoins', isAuth, async (req, res, next) => {
+  const { userId, LCoins, admin } = req.body;
+  if (!userId) return next(ApiError.badRequest('O ID do usuário é obrigatorio'));
+  if (await usersRepository.getUserById(userId) === null) next(ApiError.badRequest('O usuário não existe'));
+  if (!LCoins) return next(ApiError.badRequest('A quantidade de LCoins é obrigatoria'));
+  if (LCoins <= 0) return next(ApiError.badRequest('A quantidade de LCoins deve ser maior que 0,00'));
+  if (admin) {
+    await usersRepository.addLCoins(userId, LCoins * 100);
+    return res.status(200).json('LCoins adicionadas com sucesso');
+  }
+  return res.status(401).json('Você não tem permissão para fazer isso');
 });
 
 adminRoutes.post('/tag/create', async (req, res, next) => {

@@ -27,6 +27,12 @@ userRoutes.post('/user/login', async (req, res, next) => {
   return null;
 });
 
+userRoutes.post('/user/logout', isAuth, async (req, res) => {
+  const { refreshToken } = req.body as { refreshToken: string };
+  await usersRepository.removeRefreshToken(refreshToken);
+  res.status(200).json({ message: 'Deslogado com sucesso' });
+});
+
 userRoutes.get('/user/:id', async (req, res, next) => {
   const { id } = req.params;
   if (typeof id === 'string') {

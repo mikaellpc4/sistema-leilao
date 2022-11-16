@@ -11,6 +11,15 @@ const isAuth = async (req: Req, res: Res, next: Next) => {
     const validAcess = validateToken.acess(acessToken);
     const validRefresh = await validateToken.refresh(refreshToken);
     if (validAcess === true) {
+      const acessData = jwt.decode(acessToken) as {
+        userId: string,
+        userRole: string,
+        iat: number,
+        exp: number
+      };
+      if (acessData.userRole === 'ADMIN') {
+        req.body.admin = true;
+      }
       return next();
     }
     switch (validRefresh) {
