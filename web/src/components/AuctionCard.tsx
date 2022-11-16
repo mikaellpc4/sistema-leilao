@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import UseAuth from '../context/UseAuth'
 import GetEndingAt from '../services/GetEndingAt'
 import BidModal from './BidModal'
 
@@ -96,12 +95,7 @@ const AuctionCard = ({ props }: IAuctions) => {
       </div>
       <div className={`${isFinished(endingIn) ? 'bg-gray-400' : 'bg-green-400'} h-12 rounded-b-lg flex justify-center`}>
         <button className="text-white text-lg w-[100%]" disabled={isFinished(endingIn)} onClick={() => {
-          const { auth } = UseAuth()
-          if (auth?.user) {
-            setModalOpen(true)
-            return
-          }
-          
+          setModalOpen(true)
         }} >
           Dar Lance
         </button>

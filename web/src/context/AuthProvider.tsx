@@ -8,6 +8,7 @@ import GetUser from '../services/GetUser'
 interface IAuthContext {
   user: IUser
   signIn: (data: ILoginRequest, formRef: React.RefObject<FormHandles>) => void
+  logout: () => void
   setUser: (user: IUser) => void;
 }
 
@@ -58,7 +59,6 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
         }
         if (res?.user) {
           const loggedUser = res.user
-          localStorage.setItem('@Auth:user', JSON.stringify(loggedUser))
           setUser(loggedUser)
           return
         }
@@ -119,9 +119,26 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     }
   }
 
+  const logout = () => {
+    const storagedTokens = localStorage.getItem("@Auth:tokens")
+    if (storagedTokens) {
+      const tokens = JSON.parse(storagedTokens) as { refresh: string, acess: string }
+      localStorage.clear()
+      Api.post('/user/logout', {
+        refreshToken: tokens.refresh
+      })
+        .then()
+        .catch((e) => console.log(e))
+      delete Api.defaults.headers['acesstoken']
+      delete Api.defaults.headers['refreshtoken']
+      window.location.reload()
+    }
+  }
+
   return (
     <AuthContext.Provider value={{
       signIn,
+      logout,
       user,
       setUser
     }}>

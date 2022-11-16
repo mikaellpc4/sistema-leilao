@@ -21,6 +21,7 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
   const { user } = useContext(AuthContext);
 
   const [bidValue, setBidValue] = useState('LC 0,00')
+  const [error, setError] = useState('')
 
   const moneyMask = (value: string) => {
     if (value.length > 17) return value.replace(/.$/, "")
@@ -41,13 +42,22 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
   const requestPostAddBid = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     const normalizedBidValue = Number(bidValue.replace(/[^0-9]/g, '')) / 100
+    const storagedTokens = localStorage.getItem("@Auth:tokens")
+    if (!storagedTokens) return window.location.reload()
+
+    let tokens = JSON.parse(storagedTokens) as { refresh: string, acess: string }
+    Api.defaults.headers['refreshtoken'] = tokens.refresh
+    Api.defaults.headers['acesstoken'] = tokens.acess
     Api.post('/auction/bid', {
       auctionId: auction.id,
       bidValue: normalizedBidValue,
       bidUserId: user.id
     })
-      .then((res) => console.log(res.data))
-      .catch((e) => console.log(e.response))
+      .then(() => window.location.reload())
+      .catch((e) => {
+        setError(e.response.data)
+        return
+      })
   }
 
   if (!isOpen) return null
@@ -60,10 +70,10 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
       <div className='fixed inset-0 flex z-50'>
         <div className='relative m-auto bg-gray-200 h-[30%] w-[80%] rounded-lg'>
           <GrFormClose className='absolute right-3 top-3' type='button' onClick={closeModal} size={30} />
-          <div className='px-5 py-4 flex flex-col items-center gap-7'>
+          <div className={`px-5 py-4 flex flex-col items-center gap-${error ? '2' : '7'}`}>
             <h1 className='font-bold text-2xl'> Faça seu lance! </h1>
-            <div className='flex flex-col items-end'>
-              <div className='flex flex-col items-center gap-3'>
+            <div className='flex flex-col items-center'>
+              <div className='flex flex-col items-center gap-2'>
                 <p className='font-bold text-lg'> {auction.name} </p>
                 <input className='rounded-md outline-none h-9 px-5 w-48 select-none'
                   value={bidValue ? bidValue : ''}
@@ -71,7 +81,8 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
                     handleInputChange(e)
                   }} />
               </div>
-              <span className='text-sm'> Minimo: LC {auction.actualBid ? auction.actualBid : auction.minimumBid}</span>
+              <span className='text-sm self-end'> Minimo: LC {auction.actualBid ? auction.actualBid : auction.minimumBid}</span>
+              {error !== '' && <span className='text-red-600 font-semibold text-sm max-w-[10rem] text-center'> {error} </span>}
             </div>
             <button onClick={(e) => requestPostAddBid(e)} className='bg-green-400 rounded-md p-3 w-[50%]'> Confirmar </button>
           </div>
