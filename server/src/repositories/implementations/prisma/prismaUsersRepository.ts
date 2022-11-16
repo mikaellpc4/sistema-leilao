@@ -1,10 +1,10 @@
+import ApiError from '@controllers/errorController';
 import User from '@entities/user';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import IUserRepository from '@repositories/IUsersRepository';
 import bcrypt from 'bcrypt';
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from 'services/database';
 
 export default class PrismaUserRepository implements IUserRepository {
   async getUserById(id: string): Promise<User | null> {
@@ -56,15 +56,21 @@ export default class PrismaUserRepository implements IUserRepository {
       email: string,
       password: string
     };
-    await prisma.users.create({
-      data: {
-        id,
-        name,
-        email: email.toLowerCase(),
-        password,
-        role,
-      },
-    });
+    try {
+      await prisma.users.create({
+        data: {
+          id,
+          name,
+          email: email.toLowerCase(),
+          password,
+          role,
+        },
+      });
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        console.log(e.message);
+      }
+    }
   }
 
   async login(email: string, password: string): Promise<User | null> {
