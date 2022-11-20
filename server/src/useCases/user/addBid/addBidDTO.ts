@@ -1,7 +1,12 @@
-interface IAddBidRequestDTO {
+type TAddBidRequestDTO = {
   auctionId: string,
   bidValue: number,
   bidUserId: string,
 }
 
-export default IAddBidRequestDTO;
+type TAddBidResponseDTO = {
+  bidValue: number,
+  newUserBalance: number
+}
+
+export { TAddBidRequestDTO, TAddBidResponseDTO };

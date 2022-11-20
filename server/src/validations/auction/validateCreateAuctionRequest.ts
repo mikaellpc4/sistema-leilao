@@ -16,10 +16,6 @@ const validateCreateTagRequest = async (
     tagId,
   } = data;
 
-  const request = {
-    name, imageLink, description, minimumBid, endAt,
-  };
-
   const validRequest = {
     name: 'string',
     imageLink: 'string',
@@ -28,7 +24,7 @@ const validateCreateTagRequest = async (
     endAt: 'number',
   };
 
-  if (validateTypes(request, validRequest) === false) {
+  if (validateTypes(data, validRequest) === false) {
     next(ApiError.badRequest('Leilão invalido'));
     return false;
   }

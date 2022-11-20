@@ -1,4 +1,4 @@
-interface ICreateTagRequestDTO {
+type ICreateTagRequestDTO = {
   name: string,
   thumbnailLink: string
 }

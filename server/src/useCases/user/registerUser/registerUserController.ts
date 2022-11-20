@@ -7,7 +7,17 @@ export default class RegisterUserController {
   ) { }
 
   async handle(req: Req, res: Res, next: Next): Promise<void> {
-    const data: IRegisterUserRequestDTO = req.body;
-    await this.registerUserUseCase.execute(next, data);
+    const {
+      name,
+      email,
+      password,
+      passwordConfirm,
+    } = req.body as IRegisterUserRequestDTO;
+    await this.registerUserUseCase.execute(next, {
+      name,
+      email,
+      password,
+      passwordConfirm,
+    });
   }
 }

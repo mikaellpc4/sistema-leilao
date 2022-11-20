@@ -1,6 +1,6 @@
 import { loginUserController } from '@useCases/user/loginUser';
 import { registerUserController } from '@useCases/user/registerUser';
-import { auctionsRepository, usersRepository } from '@config/repositories';
+import { auctionsRepository, tagsRepository, usersRepository } from '@config/repositories';
 import express from 'express';
 import { addBidController } from '@useCases/user/addBid';
 import isAuth from '@middlewares/isAuth';
@@ -55,8 +55,7 @@ userRoutes.get('/user/:id', async (req, res) => {
 
 userRoutes.get('/authenticate', isAuth, async (req, res) => {
   const acessToken = req.headers.acesstoken as string;
-  const acessSecret = process.env.ACESS_SECRET as string;
-  const { userId } = jwt.verify(acessToken, acessSecret) as { userId: string };
+  const { userId } = jwt.decode(acessToken) as { userId: string };
   const user = await usersRepository.getUserById(userId);
   const userData = user?.getData();
   return res.status(200).json({ message: 'Autenticado', userData });
@@ -67,12 +66,19 @@ userRoutes.get('/auctions', async (req, res) => {
   return res.status(200).json(auctions);
 });
 
-userRoutes.post('/auction/bid', async (req, res, next) => {
-  const bidValue = await addBidController.handle(req, next);
-  if (bidValue !== null) {
-    return res.status(200).json(`Lance de ${bidValue}LCoins feito com sucesso`);
+userRoutes.post('/auction/bid', isAuth, async (req, res, next) => {
+  const newData = await addBidController.handle(req, next);
+  if (newData !== null) {
+    const { bidValue, newUserBalance } = newData;
+    return res.status(200).json({ message: 'Lance feito com sucesso', bidValue, newUserBalance });
   }
   return null;
+});
+
+// Only for tests
+userRoutes.get('/tags', async (req, res) => {
+  const tags = await tagsRepository.getTags();
+  return res.status(200).json({ messages: 'Tags', tags });
 });
 
 export default userRoutes;

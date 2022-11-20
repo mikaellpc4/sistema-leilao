@@ -1,4 +1,4 @@
-interface ILoginUserRequestDTO {
+type ILoginUserRequestDTO = {
   email: string,
   password: string
 }

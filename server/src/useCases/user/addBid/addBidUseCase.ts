@@ -1,6 +1,6 @@
 import IAuctionsRepository from '@repositories/IAuctionsRepository';
 import validateAddBidRequest from '@validations/user/validateAddBidRequest';
-import IAddBidDTO from './addBidDTO';
+import { TAddBidRequestDTO, TAddBidResponseDTO } from './addBidDTO';
 
 export default class DoABidUseCase {
   constructor(
@@ -9,12 +9,16 @@ export default class DoABidUseCase {
 
   async execute(
     next: Next,
-    data: IAddBidDTO,
-  ): Promise<number | null> {
+    data: TAddBidRequestDTO,
+  ): Promise<TAddBidResponseDTO | null> {
     if (await validateAddBidRequest(next, data)) {
       const { auctionId, bidValue, bidUserId } = data;
-      await this.auctionsRepository.addBid(auctionId, bidValue, bidUserId);
-      return data.bidValue / 100;
+      const { newUserBalance } = await this.auctionsRepository.addBid(
+        auctionId,
+        bidValue,
+        bidUserId,
+      );
+      return { newUserBalance, bidValue };
     }
     return null;
   }

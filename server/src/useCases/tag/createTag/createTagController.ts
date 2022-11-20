@@ -7,7 +7,7 @@ export default class CreateTagController {
   ) { }
 
   async handle(req: Req, next: Next): Promise<void> {
-    const data: ICreateTagRequestDTO = req.body;
-    await this.createTagUseCase.execute(next, data);
+    const { name, thumbnailLink } = req.body as ICreateTagRequestDTO;
+    await this.createTagUseCase.execute(next, { name, thumbnailLink });
   }
 }

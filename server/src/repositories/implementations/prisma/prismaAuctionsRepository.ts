@@ -92,7 +92,9 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
     });
   }
 
-  async addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<void> {
+  async addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<{
+    newUserBalance: number
+  }> {
     const auction = await prisma.auctions.findUnique({
       where: {
         id: auctionId,
@@ -120,7 +122,7 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
         buyerId: bidUserId,
       },
     });
-    await prisma.users.update({
+    const updatedUser = await prisma.users.update({
       where: {
         id: bidUserId,
       },
@@ -130,18 +132,21 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
         },
       },
     });
+    const newUserBalance = updatedUser.LCoins;
+    return { newUserBalance };
   }
 
-  async checkActualBid(auctionId: string): Promise<number> {
-    const { actualBid } = await prisma.auctions.findUnique({
+  async checkBids(auctionId: string): Promise<{ actualBid: number, minimumBid: number }> {
+    const { actualBid, minimumBid } = await prisma.auctions.findUnique({
       where: {
         id: auctionId,
       },
       select: {
         actualBid: true,
+        minimumBid: true,
       },
-    }) as { actualBid: number };
-    return actualBid;
+    }) as { actualBid: number, minimumBid: number };
+    return { actualBid, minimumBid };
   }
 
   async usingTag(tagId: string): Promise<boolean> {

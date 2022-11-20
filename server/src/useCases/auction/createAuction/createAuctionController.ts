@@ -7,7 +7,21 @@ export default class CreatAuctionController {
   ) { }
 
   async handle(req: Req, next: Next): Promise<void> {
-    const data: ICreateAuctionRequestDTO = req.body;
-    this.createAuctionUseCase.execute(next, data);
+    const {
+      name,
+      imageLink,
+      description,
+      minimumBid,
+      endAt,
+      tagId,
+    } = req.body as ICreateAuctionRequestDTO;
+    this.createAuctionUseCase.execute(next, {
+      name,
+      imageLink,
+      description,
+      minimumBid,
+      endAt,
+      tagId,
+    });
   }
 }

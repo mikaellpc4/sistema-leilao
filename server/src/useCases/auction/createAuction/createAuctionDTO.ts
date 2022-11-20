@@ -1,4 +1,4 @@
-interface ICreateAuctionRequestDTO {
+type ICreateAuctionRequestDTO = {
   name: string;
   imageLink: string;
   description: string;

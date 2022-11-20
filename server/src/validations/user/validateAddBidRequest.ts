@@ -1,12 +1,12 @@
 import ApiError from '@controllers/errorController';
 import { auctionsRepository, usersRepository } from '@config/repositories';
-import IAddBidRequestDTO from '@useCases/user/addBid/addBidDTO';
+import { TAddBidRequestDTO } from '@useCases/user/addBid/addBidDTO';
 import { exists } from '@validations/dataValidationMethods';
 import validateTypes from '@validations/validateTypes';
 
 const validateAddBidRequest = async (
   next: Next,
-  data: IAddBidRequestDTO,
+  data: TAddBidRequestDTO,
 ) => {
   const {
     auctionId,
@@ -35,9 +35,14 @@ const validateAddBidRequest = async (
     return false;
   }
 
-  const auctionActualBid = await auctionsRepository.checkActualBid(auctionId);
+  const bids = await auctionsRepository.checkBids(auctionId);
 
-  if (bidValue <= auctionActualBid) {
+  if (bidValue < bids.minimumBid) {
+    next(ApiError.badRequest(`O lance deve ser maior ou igual a LC ${new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bids.minimumBid / 100)} `));
+    return false;
+  }
+
+  if (bidValue <= bids.actualBid) {
     next(ApiError.badRequest('O lance deve ser maior que o lance anterior'));
     return false;
   }
@@ -49,7 +54,7 @@ const validateAddBidRequest = async (
 
   const userBalance = await usersRepository.checkUserBalance(bidUserId);
 
-  if (userBalance < bidValue) {
+  if (bidValue > userBalance) {
     next(ApiError.badRequest('Você não possui saldo suficiente'));
     return false;
   }

@@ -8,8 +8,10 @@ interface IAuctionsRepository {
   save(auction: Auction): Promise<void>
   finish(auctionId: string): Promise<void>
 
-  addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<void>
-  checkActualBid(auctionId: string): Promise<number>
+  addBid(auctionId: string, bidValue: number, bidUserId: string): Promise<{
+    newUserBalance: number
+  }>
+  checkBids(auctionId: string): Promise<{ actualBid: number, minimumBid: number }>
 
   usingTag(tagId: string): Promise<boolean>
 }

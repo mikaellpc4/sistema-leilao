@@ -7,7 +7,7 @@ export default class LoginUserController {
   ) { }
 
   async handle(req: Req, next: Next): Promise<{ refresh: string, acess: string } | null> {
-    const data: ILoginUserRequestDTO = req.body;
-    return this.loginUserUseCase.execute(next, data);
+    const { email, password } = req.body as ILoginUserRequestDTO;
+    return this.loginUserUseCase.execute(next, { email, password });
   }
 }

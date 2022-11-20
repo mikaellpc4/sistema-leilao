@@ -13,7 +13,7 @@ const isAuth = async (req: Req, res: Res, next: Next) => {
     if (validAcess === true) {
       const acessData = jwt.decode(acessToken) as {
         userId: string,
-        userRole: string,
+        userRole: Role,
         iat: number,
         exp: number
       };
@@ -38,16 +38,16 @@ const isAuth = async (req: Req, res: Res, next: Next) => {
         if (findedUser?.getRefreshTokens()?.includes(refreshToken)) {
           const newRefreshToken = generateToken.refresh(findedUser);
           await usersRepository.removeRefreshToken(refreshToken);
-          return res.status(401).json({ newRefreshToken });
+          return res.status(202).json({ newRefreshToken });
         }
         return res.status(401).json({ message: 'Sessão expirada' });
       }
       default: {
-        return res.status(400).json({ message: 'Sessão invalida' });
+        return res.status(401).json({ message: 'Sessão invalida' });
       }
     }
   }
-  return res.status(400).json({ message: 'Headers invalidos' });
+  return res.status(401).json({ message: 'Headers invalidos' });
 };
 
 export default isAuth;
