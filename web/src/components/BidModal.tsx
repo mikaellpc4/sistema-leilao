@@ -129,7 +129,7 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
                 rounded-md w-[50vw] h-16
                 bg-green-400 
                 flex justify-center items-center
-                text-xl
+                text-xl text-white
               '>
               {isLoading
                 ? <AiOutlineLoading className='text-white animate-[spin_.6s_linear_infinite]' size={40} />

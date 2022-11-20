@@ -85,9 +85,10 @@ const Admin = () => {
             bg-green-400 p-5 rounded-lg 
             h-[3.5rem] w-64 
             flex justify-center items-center
+            text-gray-50
           '>
           {isLoading
-            ? <AiOutlineLoading className='text-white animate-[spin_.6s_linear_infinite]' size={30} />
+            ? <AiOutlineLoading className='animate-[spin_.6s_linear_infinite]' size={30} />
             : 'Adicionar'
           }
         </button>
