@@ -1,4 +1,4 @@
-interface IAuctions {
+type IAuction = {
   props: {
     id: string,
     name: string,

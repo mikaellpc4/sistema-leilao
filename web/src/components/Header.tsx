@@ -2,7 +2,8 @@ import { Link, Navigate, useLocation } from "react-router-dom"
 import AuthContext from "../context/AuthProvider"
 import { useState, useContext, useEffect } from 'react'
 import { FiUser } from 'react-icons/fi'
-import ProfilePopup from "./ProfilePopup"
+import ProfileModal from "./ProfilePopup"
+import normalizeMoney from "../services/normalizeMoney"
 
 const Header = () => {
 
@@ -14,7 +15,7 @@ const Header = () => {
 
   const { user } = useContext(AuthContext);
 
-  const [openProfile, setOpenProfile] = useState(false)
+  const [isOpenProfileModal, setIsOpenProfileModal] = useState(false)
 
   const [redirect, setRedirect] = useState(false)
 
@@ -23,7 +24,7 @@ const Header = () => {
       setRedirect(true)
       return
     }
-    setOpenProfile(!openProfile)
+    setIsOpenProfileModal(!isOpenProfileModal)
   }
 
   return (
@@ -32,7 +33,7 @@ const Header = () => {
       <div className="flex justify-end items-center h-[100%] gap-5">
         {user.name !== '' && user.LCoins !== null &&
           <span className="text-white font-semibold">
-            LC {new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(user.LCoins / 100)}
+            LC {normalizeMoney(user.LCoins)}
           </span>
         }
         <div
@@ -42,7 +43,7 @@ const Header = () => {
               ? <span onClick={handleProfileClick}> {user.name.slice(0, 1)} </span>
               : <FiUser onClick={handleProfileClick} className="absolute" size={25} />
             }
-            {openProfile && <ProfilePopup />}
+            <ProfileModal isOpen={isOpenProfileModal} closeModal={() => setIsOpenProfileModal(false)} />
           </div>
         </div>
       </div>

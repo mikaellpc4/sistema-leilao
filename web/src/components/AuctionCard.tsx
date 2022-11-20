@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import GetEndingAt from '../services/GetEndingAt'
+import normalizeMoney from '../services/normalizeMoney'
 import BidModal from './BidModal'
 
-const AuctionCard = ({ props }: IAuctions) => {
+const AuctionCard = ({ props }: IAuction) => {
 
   const [endingIn, setEndingIn] = useState({
     days: '',
@@ -28,10 +29,18 @@ const AuctionCard = ({ props }: IAuctions) => {
   }
 
   useEffect(() => {
+    setCreatedAt(new Date(props.createdAt * 1000).toLocaleDateString())
+  }, [])
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setEndingIn(GetEndingAt(props.endAt))
     }, 1000)
-    setCreatedAt(new Date(props.createdAt * 1000).toLocaleDateString())
+    return () => clearInterval(interval)
+  }, [])
+
+
+  useEffect(() => {
     if (props.buyer) {
       const fullBuyerName = props.buyer?.name.split(' ')
       if (fullBuyerName.length > 1) {
@@ -40,13 +49,14 @@ const AuctionCard = ({ props }: IAuctions) => {
       setBuyerName(props.buyer.name)
     }
     if (props.actualBid) {
-      setBidValue(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(props.actualBid / 100))
+      setBidValue(normalizeMoney(props.actualBid))
+    } else {
+      setBidValue('')
     }
     if (props.minimumBid) {
-      setMinimumBidValue(new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(props.minimumBid / 100))
+      setMinimumBidValue(normalizeMoney(props.minimumBid))
     }
-    return () => clearInterval(interval)
-  }, [])
+  }, [props.buyer, props.actualBid, props.minimumBid])
 
   return (
     <div className="rounded-lg shadow-2xl border border-gray-200 w-auto pt-6">
@@ -89,7 +99,7 @@ const AuctionCard = ({ props }: IAuctions) => {
             </>
             :
             <>
-              <span className='font-normal text-xl'>
+              <span className='font-semibold text-md'>
                 Lance minimo: <span className='text-yellow-400 font-bold'> {minimumBidValue} </span>
               </span>
             </>
@@ -103,9 +113,13 @@ const AuctionCard = ({ props }: IAuctions) => {
           Dar Lance
         </button>
       </div>
-      <BidModal isOpen={modalOpen} closeModal={
-        () => setModalOpen(false)} auction={{ id: props.id, name: props.name, minimumBid: minimumBidValue, actualBid: bidValue }
-        } />
+      <BidModal isOpen={modalOpen} closeModal={() => setModalOpen(false)}
+        auction={{
+          id: props.id,
+          name: props.name,
+          minimumBid: minimumBidValue,
+          actualBid: bidValue
+        }} />
     </div>
   )
 }

@@ -1,8 +1,13 @@
 import { GrFormClose } from 'react-icons/gr'
-import { useState, useEffect, useContext } from 'react'
-import Api from '../services/Api'
+import { useState, useContext, useEffect } from 'react'
 import AuthContext from '../context/AuthProvider'
 import { Navigate } from 'react-router-dom'
+import Api from '../services/Api'
+import { useMutation } from '@tanstack/react-query'
+import queryClient from '../services/queryClient'
+import { AxiosError } from 'axios'
+import normalizeMoney from '../services/normalizeMoney'
+import { AiOutlineLoading } from 'react-icons/ai'
 
 interface IBidModal {
   isOpen: boolean,
@@ -15,13 +20,14 @@ interface IBidModal {
   }
 }
 
-
 const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
+  if (!isOpen) return null
 
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
+
+  if (user.name === '') return <Navigate to='/user/login' />
 
   const [bidValue, setBidValue] = useState('LC 0,00')
-  const [error, setError] = useState('')
 
   const moneyMask = (value: string) => {
     if (value.length > 17) return value.replace(/.$/, "")
@@ -39,38 +45,69 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
     setBidValue(moneyMask(e.target.value))
   }
 
-  const requestPostAddBid = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault()
-    const normalizedBidValue = Number(bidValue.replace(/[^0-9]/g, '')) / 100
-    const storagedTokens = localStorage.getItem("@Auth:tokens")
-    if (!storagedTokens) return window.location.reload()
-
-    let tokens = JSON.parse(storagedTokens) as { refresh: string, acess: string }
-    Api.defaults.headers['refreshtoken'] = tokens.refresh
-    Api.defaults.headers['acesstoken'] = tokens.acess
-    Api.post('/auction/bid', {
-      auctionId: auction.id,
-      bidValue: normalizedBidValue,
-      bidUserId: user.id
-    })
-      .then(() => window.location.reload())
-      .catch((e) => {
-        setError(e.response.data)
-        return
-      })
+  type TAddBidResponse = {
+    message: string,
+    bidValue: number,
+    newUserBalance: number
   }
 
-  if (!isOpen) return null
+  const addBid = async (data: IAddBidRequest) => {
+    return Api.post<typeof data, TAddBidResponse>('/auction/bid', data)
+  }
 
-  if (user.name === '') return <Navigate to='/user/login' />
+  let prevAuctions: IAuction[] | undefined
+
+  const { error, isLoading, mutateAsync } = useMutation(addBid, {
+    onSuccess(res) {
+      prevAuctions = queryClient.getQueryData<IAuction[]>(['auctions'])
+      const newAuctions = prevAuctions?.map((item) => {
+        if (item.props.id === auction.id) {
+          return {
+            props: {
+              ...item.props,
+              actualBid: res.bidValue,
+              buyerId: user.id,
+              buyer: {
+                id: user.id,
+                name: user.name
+              }
+            }
+          }
+        }
+        return item
+      })
+      newAuctions && queryClient.setQueryData<IAuction[]>(['auctions'], newAuctions)
+      setUser({
+        ...user,
+        LCoins: res.newUserBalance
+      })
+      closeModal()
+    },
+  })
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    const normalizedBidValue = normalizeMoney(bidValue)
+    const normalizedBidValueNumber = Number(normalizedBidValue.replace(/[^0-9]/g, '')) / 100
+    const data = {
+      auctionId: auction.id,
+      bidValue: normalizedBidValueNumber,
+      bidUserId: user.id
+    }
+    mutateAsync(data)
+  }
 
   return (
     <form>
       <div className='fixed inset-0 h-screen bg-black bg-opacity-50 z-40'></div>
       <div className='fixed inset-0 flex z-50'>
-        <div className='relative m-auto bg-gray-200 h-[30%] w-[80%] rounded-lg'>
-          <GrFormClose className='absolute right-3 top-3' type='button' onClick={closeModal} size={30} />
-          <div className={`px-5 py-4 flex flex-col items-center gap-${error ? '2' : '7'}`}>
+        <div className='relative m-auto bg-gray-200 h-72 w-[80%] rounded-lg'>
+          <GrFormClose className='absolute right-3 top-3' type='button' size={30} onClick={() => {
+            if(!isLoading){
+              closeModal()
+            }
+          }}/>
+          <div className={`px-5 py-4 flex flex-col items-center gap-${error instanceof AxiosError ? '2' : '7'}`}>
             <h1 className='font-bold text-2xl'> Faça seu lance! </h1>
             <div className='flex flex-col items-center'>
               <div className='flex flex-col items-center gap-2'>
@@ -82,9 +119,23 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
                   }} />
               </div>
               <span className='text-sm self-end'> Minimo: LC {auction.actualBid ? auction.actualBid : auction.minimumBid}</span>
-              {error !== '' && <span className='text-red-600 font-semibold text-sm max-w-[10rem] text-center'> {error} </span>}
+              {error instanceof AxiosError
+                ? <span className='text-red-600 font-semibold text-sm max-w-[10rem] text-center'> {error.response?.data} </span>
+                : ''
+              }
             </div>
-            <button onClick={(e) => requestPostAddBid(e)} className='bg-green-400 rounded-md p-3 w-[50%]'> Confirmar </button>
+            <button onClick={handleSubmit} disabled={isLoading}
+              className='
+                rounded-md w-[50vw] h-16
+                bg-green-400 
+                flex justify-center items-center
+                text-xl
+              '>
+              {isLoading
+                ? <AiOutlineLoading className='text-white animate-[spin_.6s_linear_infinite]' size={40} />
+                : 'Confirmar'
+              }
+            </button>
           </div>
         </div>
       </div>

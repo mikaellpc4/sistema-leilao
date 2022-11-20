@@ -1,13 +1,14 @@
 import { FormHandles } from '@unform/core'
-import { Axios, AxiosError } from 'axios'
-import { createContext, useState, useEffect, useContext } from 'react'
-import Api from '../services/Api'
+import { AxiosError } from 'axios'
+import { createContext, useState, useEffect } from 'react'
+import Api, { AxiosApi } from '../services/Api'
 import GetUser from '../services/GetUser'
+import normalizeMoney from '../services/normalizeMoney'
 
 
 interface IAuthContext {
   user: IUser
-  signIn: (data: ILoginRequest, formRef: React.RefObject<FormHandles>) => void
+  signIn: (data: ILoginRequest) => Promise<void>
   logout: () => void
   setUser: (user: IUser) => void;
 }
@@ -33,90 +34,36 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
   useEffect(() => {
     const loadingStorageData = async () => {
       const storagedTokens = localStorage.getItem("@Auth:tokens")
-
+      const storagedUser = localStorage.getItem("@Auth:user")
+      if(storagedUser) setUser(JSON.parse(storagedUser))
       if (storagedTokens) {
         let tokens = JSON.parse(storagedTokens) as { refresh: string, acess: string }
-        Api.defaults.headers['refreshtoken'] = tokens.refresh
-        Api.defaults.headers['acesstoken'] = tokens.acess
+        AxiosApi.defaults.headers['refreshtoken'] = tokens.refresh
+        AxiosApi.defaults.headers['acesstoken'] = tokens.acess
         const res = await GetUser()
         if (res instanceof AxiosError) {
           setUser(defaultUser)
           localStorage.clear()
           return
         }
-        if (res?.newAcessToken) {
-          Api.defaults.headers['acesstoken'] = res.newAcessToken
-          tokens = { refresh: tokens.refresh, acess: res.newAcessToken }
-          localStorage.setItem('@Auth:tokens', JSON.stringify(tokens))
-          loadingStorageData()
-          return
-        }
-        if (res?.newRefreshtoken) {
-          Api.defaults.headers['refreshtoken'] = res.newRefreshtoken
-          localStorage.clear()
-          loadingStorageData()
-          return
-        }
-        if (res?.user) {
-          const loggedUser = res.user
-          setUser(loggedUser)
-          return
-        }
+        const loggedUser = res as IUser
+        localStorage.setItem("@Auth:user", JSON.stringify(loggedUser))
+        setUser(loggedUser)
+        return
       }
+      setUser(defaultUser)
     }
     loadingStorageData()
   }, [])
 
-  const signIn = async (data: ILoginRequest, formRef: React.RefObject<FormHandles>) => {
-    try {
-      await Api.post('/user/login', data)
-        .then(async (res) => {
-          const tokens = res.data.tokens as { refresh: string, acess: string }
-          if (tokens) {
-            Api.defaults.headers['refreshtoken'] = tokens.refresh
-            Api.defaults.headers['acesstoken'] = tokens.acess
-            localStorage.setItem('@Auth:tokens', JSON.stringify(tokens))
-            const res = await GetUser()
-            if (res instanceof AxiosError) return
-            if (res?.user) {
-              localStorage.setItem('@Auth:user', JSON.stringify(res.user))
-              setUser(res.user)
-            }
-          }
-        })
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        const error = e.response
-        if (error?.status !== 400) {
-          console.log(e)
-          alert('Ocorreu um erro do nosso lado, tente novamente mais tarde')
-          return
-        }
-        switch (error.data) {
-          case 'Dados invalidos':
-            formRef.current?.setErrors({
-              email: error.data,
-              password: error.data
-            })
-            break
-          case 'O email é obrigatorio':
-            formRef.current?.setFieldError('email', error.data)
-            break
-          case 'A senha é obrigatoria':
-            formRef.current?.setFieldError('password', error.data)
-            break
-          case 'O email não é valido':
-            formRef.current?.setFieldError('email', error.data)
-            break
-          case 'Email ou senha incorreto(os)':
-            formRef.current?.setErrors({
-              email: error.data,
-              password: error.data
-            })
-            break
-        }
-      }
-    }
+  const signIn = async (data: ILoginRequest) => {
+    type TSignInResponse = { message: string, tokens: { refresh: string, acess: string } }
+    const { tokens } = await Api.post<ILoginRequest, TSignInResponse>('/user/login', data)
+    localStorage.setItem('@Auth:tokens', JSON.stringify(tokens))
+    AxiosApi.defaults.headers['refreshtoken'] = tokens.refresh
+    AxiosApi.defaults.headers['acesstoken'] = tokens.acess
+    const user = await GetUser() as IUser
+    setUser(user)
   }
 
   const logout = () => {
@@ -129,10 +76,10 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       })
         .then()
         .catch((e) => console.log(e))
-      delete Api.defaults.headers['acesstoken']
-      delete Api.defaults.headers['refreshtoken']
-      window.location.reload()
+      delete AxiosApi.defaults.headers['acesstoken']
+      delete AxiosApi.defaults.headers['refreshtoken']
     }
+    setUser(defaultUser)
   }
 
   return (
@@ -140,7 +87,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       signIn,
       logout,
       user,
-      setUser
+      setUser,
     }}>
       {children}
     </AuthContext.Provider>

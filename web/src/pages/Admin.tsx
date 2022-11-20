@@ -6,9 +6,11 @@ import NotFound from './NotFound'
 import { BsCurrencyDollar } from 'react-icons/bs'
 import { FiUser } from 'react-icons/fi'
 import Api from '../services/Api'
-import { AxiosError } from 'axios'
 import { FormHandles } from '@unform/core'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { AxiosError } from 'axios'
+import { useMutation } from '@tanstack/react-query'
+import { AiOutlineLoading } from 'react-icons/ai'
 
 const Admin = () => {
   const { user } = useContext(AuthContext)
@@ -41,33 +43,32 @@ const Admin = () => {
     LCoins: number
   }
 
-  const handleAddLCoinsRequest = async (data: IAddLCoinsRequest) => {
-    formRef.current?.setErrors({})
-    setMessage('')
+  const addLCoins = async (data: IAddLCoinsRequest) => {
     const { userId } = data
     const normalizedLCoinsValue = Number(LCoinsValue.replace(/[^0-9]/g, '')) / 100
-    Api.post('/admin/addLCoins', { userId, LCoins: normalizedLCoinsValue })
-      .then((res) => setMessage(res.data))
-      .catch((e) => {
-        const res = e.response
-        if (res.status === 500) {
-          alert('Ocorreu um erro do nosso lado, tente novamente mais tarde')
-        }
-        switch (res.data) {
-          case 'O ID do usuário é obrigatorio':
-            formRef.current?.setFieldError('userId', res.data)
-            break
-          case 'O usuário não existe':
-            formRef.current?.setFieldError('userId', res.data)
-            break
-          case 'A quantidade de LCoins é obrigatoria':
-            formRef.current?.setFieldError('LCoins', res.data)
-            break
-          case 'quantidade de LCoins deve ser maior que 0,00':
-            formRef.current?.setFieldError('LCoins', res.data)
-            break
-        }
-      })
+    return Api.post<IAddLCoinsRequest, string>('/admin/addLCoins', { userId, LCoins: normalizedLCoinsValue })
+  }
+
+  const { mutate, isLoading } = useMutation(addLCoins, {
+    onMutate: () => {
+      formRef.current?.setErrors({})
+    },
+    onError: (e: AxiosError) => {
+      const res = e.response
+      if (res?.status === 500) {
+        alert('Ocorreu um erro do nosso lado, tente novamente mais tarde')
+      }
+      const errorMessage = res?.data as string;
+      if (errorMessage.includes('usuário')) return formRef.current?.setFieldError('userId', errorMessage)
+      if (errorMessage.includes('LCoins')) return formRef.current?.setFieldError('LCoins', errorMessage)
+    },
+    onSuccess: (res) => {
+      setMessage(res)
+    }
+  })
+
+  const handleAddLCoinsRequest = async (data: IAddLCoinsRequest) => {
+    mutate(data)
   }
 
   return (
@@ -79,7 +80,17 @@ const Admin = () => {
           <Input onChange={handleInputChange} value={LCoinsValue} name='LCoins'
             displayName='Quantidade de LCoins' Icon={BsCurrencyDollar} />
         </div>
-        <button type='submit' className='bg-green-400 p-5 rounded-lg w-64'> Adicionar </button>
+        <button type='submit' disabled={isLoading}
+          className='
+            bg-green-400 p-5 rounded-lg 
+            h-[3.5rem] w-64 
+            flex justify-center items-center
+          '>
+          {isLoading
+            ? <AiOutlineLoading className='text-white animate-[spin_.6s_linear_infinite]' size={30} />
+            : 'Adicionar'
+          }
+        </button>
         {message !== '' && <span className='text-green-400 font-semibold text-xl'>{message}</span>}
         <Link to='/'> Inicio </Link>
       </Form>
