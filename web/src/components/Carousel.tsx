@@ -10,7 +10,7 @@ import { AiOutlineLoading } from 'react-icons/ai';
 SwiperCore.use([Navigation, Autoplay])
 
 const Carousel = () => {
-  const { data, isError, isFetching } = useQuery(['tags'], () => Api.get<Tag[]>('http://localhost:3333/tags'));
+  const { data, isError, isFetching } = useQuery(['tags'], () => Api.get<Tag[]>('/tags'));
 
   if (!data) return (
     <div className="w-[100%] h-[55vh] flex items-center justify-center" >
