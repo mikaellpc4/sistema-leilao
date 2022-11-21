@@ -8,7 +8,7 @@ import cors from 'cors';
 dotenv.config();
 
 const app = express();
-const port = 3333;
+const port = process.env.PORT as string;
 
 app.use(cors({
   origin: '*',
