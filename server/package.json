@@ -5,7 +5,8 @@
   "main": "api.js",
   "scripts": {
     "dev": "tsx watch src/api.ts",
-    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored"
+    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
+    "start": "node ./dist/api.js"
   },
   "repository": {
     "type": "git",
