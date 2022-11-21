@@ -2,14 +2,14 @@ import { useEffect, useRef } from 'react'
 import { useField } from '@unform/core'
 import { IconType } from 'react-icons/lib'
 
-interface IInput {
+type Input = {
   name: string,
   displayName: string,
   Icon: IconType,
   [x: string]: any
 }
 
-const Input = ({ name, displayName, Icon, ...rest }: IInput) => {
+const Input = ({ name, displayName, Icon, ...rest }: Input) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const { fieldName, registerField, error } = useField(name)
 

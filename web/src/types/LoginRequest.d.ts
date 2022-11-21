@@ -1,4 +1,4 @@
-interface ILoginRequest {
+type LoginRequest = {
   email: string,
   password: string
 }

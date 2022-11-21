@@ -6,7 +6,7 @@ import { AiOutlineLoading } from "react-icons/ai"
 
 
 const Home = () => {
-  const { data, isError, isFetching } = useQuery(['auctions'], () => Api.get<IAuction[]>('/auctions'), {
+  const { data, isError, isFetching } = useQuery(['auctions'], () => Api.get<Auction[]>('/auctions'), {
     staleTime: 1000 * 60 // 60 seconds
   })
 

@@ -3,7 +3,7 @@ import GetEndingAt from '../services/GetEndingAt'
 import normalizeMoney from '../services/normalizeMoney'
 import BidModal from './BidModal'
 
-const AuctionCard = ({ props }: IAuction) => {
+const AuctionCard = ({ props }: Auction) => {
 
   const [endingIn, setEndingIn] = useState({
     days: '',

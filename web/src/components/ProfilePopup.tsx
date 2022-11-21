@@ -2,12 +2,12 @@ import { useContext } from 'react'
 import { Link } from "react-router-dom"
 import AuthContext from "../context/AuthProvider"
 
-interface IProfileModalProps {
+type ProfileModalProps = {
   isOpen: boolean,
   closeModal: () => void
 }
 
-const ProfileModal = ({ isOpen, closeModal }: IProfileModalProps) => {
+const ProfileModal = ({ isOpen, closeModal }: ProfileModalProps) => {
   if (!isOpen) return null
   const { user, logout } = useContext(AuthContext)
 

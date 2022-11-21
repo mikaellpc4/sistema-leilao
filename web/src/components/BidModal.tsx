@@ -1,5 +1,5 @@
 import { GrFormClose } from 'react-icons/gr'
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext } from 'react'
 import AuthContext from '../context/AuthProvider'
 import { Navigate } from 'react-router-dom'
 import Api from '../services/Api'
@@ -51,15 +51,15 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
     newUserBalance: number
   }
 
-  const addBid = async (data: IAddBidRequest) => {
+  const addBid = async (data: AddBidRequest) => {
     return Api.post<typeof data, TAddBidResponse>('/auction/bid', data)
   }
 
-  let prevAuctions: IAuction[] | undefined
+  let prevAuctions: Auction[] | undefined
 
   const { error, isLoading, mutateAsync } = useMutation(addBid, {
     onSuccess(res) {
-      prevAuctions = queryClient.getQueryData<IAuction[]>(['auctions'])
+      prevAuctions = queryClient.getQueryData<Auction[]>(['auctions'])
       const newAuctions = prevAuctions?.map((item) => {
         if (item.props.id === auction.id) {
           return {
@@ -76,7 +76,7 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
         }
         return item
       })
-      newAuctions && queryClient.setQueryData<IAuction[]>(['auctions'], newAuctions)
+      newAuctions && queryClient.setQueryData<Auction[]>(['auctions'], newAuctions)
       setUser({
         ...user,
         LCoins: res.newUserBalance
@@ -103,10 +103,10 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
       <div className='fixed inset-0 flex z-50'>
         <div className='relative m-auto bg-gray-200 h-72 w-[80%] rounded-lg'>
           <GrFormClose className='absolute right-3 top-3' type='button' size={30} onClick={() => {
-            if(!isLoading){
+            if (!isLoading) {
               closeModal()
             }
-          }}/>
+          }} />
           <div className={`px-5 py-4 flex flex-col items-center gap-${error instanceof AxiosError ? '2' : '7'}`}>
             <h1 className='font-bold text-2xl'> Faça seu lance! </h1>
             <div className='flex flex-col items-center'>

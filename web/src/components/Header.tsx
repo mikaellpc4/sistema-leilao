@@ -1,6 +1,6 @@
-import { Link, Navigate, useLocation } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom"
 import AuthContext from "../context/AuthProvider"
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext } from 'react'
 import { FiUser } from 'react-icons/fi'
 import ProfileModal from "./ProfilePopup"
 import normalizeMoney from "../services/normalizeMoney"
