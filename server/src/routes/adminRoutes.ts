@@ -54,11 +54,9 @@ adminRoutes.post('/admin/addLCoins', isAuth, async (req, res, next) => {
 adminRoutes.post('/tag/create', isAuth, async (req, res, next) => {
   const { admin } = req.body;
   if (!admin) return next(ApiError.unauthorized('Você não tem permissão para fazer isso'));
-  if (req.body.admim) {
-    await createTagController.handle(req, next);
-    if (res.headersSent === false) {
-      return res.status(200).json('Tag criada');
-    }
+  await createTagController.handle(req, next);
+  if (res.headersSent === false) {
+    return res.status(200).json('Tag criada');
   }
   return null;
 });

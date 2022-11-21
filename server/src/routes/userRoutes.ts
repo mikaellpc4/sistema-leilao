@@ -68,7 +68,7 @@ userRoutes.post('/auction/bid', isAuth, async (req, res, next) => {
 // Only for tests
 userRoutes.get('/tags', async (req, res) => {
   const tags = await tagsRepository.getTags();
-  return res.status(200).json({ messages: 'Tags', tags });
+  return res.status(200).json(tags);
 });
 
 export default userRoutes;
