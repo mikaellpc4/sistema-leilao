@@ -39,14 +39,18 @@ const Admin = () => {
   }
 
   interface IAddLCoinsRequest {
-    userId: string,
+    userId?: string,
+    userEmail?: string,
     LCoins: number
   }
 
-  const addLCoins = async (data: IAddLCoinsRequest) => {
-    const { userId } = data
+  const addLCoins = async (data: { user: string, LCoins: number }) => {
+    const { user } = data
     const normalizedLCoinsValue = Number(LCoinsValue.replace(/[^0-9]/g, '')) / 100
-    return Api.post<IAddLCoinsRequest, string>('/admin/addLCoins', { userId, LCoins: normalizedLCoinsValue })
+    if (user.includes('@')) {
+      return Api.post<IAddLCoinsRequest, string>('/admin/addLCoins', { userEmail: user, LCoins: normalizedLCoinsValue })
+    }
+    return Api.post<IAddLCoinsRequest, string>('/admin/addLCoins', { userId: user, LCoins: normalizedLCoinsValue })
   }
 
   const { mutate, isLoading } = useMutation(addLCoins, {
@@ -59,7 +63,7 @@ const Admin = () => {
         alert('Ocorreu um erro do nosso lado, tente novamente mais tarde')
       }
       const errorMessage = res?.data as string;
-      if (errorMessage.includes('usuário')) return formRef.current?.setFieldError('userId', errorMessage)
+      if (errorMessage.includes('usuário')) return formRef.current?.setFieldError('user', errorMessage)
       if (errorMessage.includes('LCoins')) return formRef.current?.setFieldError('LCoins', errorMessage)
     },
     onSuccess: (res) => {
@@ -76,7 +80,7 @@ const Admin = () => {
       <Form ref={formRef} onSubmit={handleAddLCoinsRequest} className='flex flex-col items-center gap-5'>
         <h1 className='font-bold text-xl'> Adicione LCoins ao usuario </h1>
         <div className='flex flex-col gap-3 w-72'>
-          <Input name='userId' displayName='Id do usuario' Icon={FiUser} />
+          <Input name='user' displayName='Id ou email do usuário' Icon={FiUser} />
           <Input onChange={handleInputChange} value={LCoinsValue} name='LCoins'
             displayName='Quantidade de LCoins' Icon={BsCurrencyDollar} />
         </div>
