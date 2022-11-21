@@ -10,3 +10,5 @@
 - NodeJS
 - Prisma ORM
 - JWT
+
+Link para o projeto funcionando: https://sistema-leilao.vercel.app/
