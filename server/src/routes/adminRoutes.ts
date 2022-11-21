@@ -7,6 +7,7 @@ import { createTagController } from '@useCases/tag/createTag';
 import { deleteTagController } from '@useCases/tag/deleteTag';
 import express from 'express';
 import normalizeMoney from '@services/normalizeMoney';
+import User from '@entities/user';
 
 const adminRoutes = express.Router();
 
@@ -23,15 +24,29 @@ adminRoutes.get('/user/balance', async (req, res) => {
 });
 
 adminRoutes.post('/admin/addLCoins', isAuth, async (req, res, next) => {
-  const { userId, LCoins, admin } = req.body;
+  const {
+    userId,
+    userEmail,
+    LCoins,
+    admin,
+  } = req.body;
+  if (!userEmail && !userId) return next(ApiError.badRequest('O ID ou email do usuário é obrigatorio'));
   if (!admin) return next(ApiError.unauthorized('Você não tem permissão para fazer isso'));
-  if (!userId) return next(ApiError.badRequest('O ID do usuário é obrigatorio'));
-  if (await usersRepository.getUserById(userId) === null) return next(ApiError.badRequest('O usuário não existe'));
+  let user: User | null = null;
+  if (userId) {
+    user = await usersRepository.getUserById(userId);
+  }
+  if (userEmail) {
+    user = await usersRepository.getUserByEmail(userEmail);
+  }
+  if (user === null) {
+    return next(ApiError.badRequest('O usuário não existe'));
+  }
   if (!LCoins) return next(ApiError.badRequest('A quantidade de LCoins é obrigatoria'));
   if (LCoins <= 0) return next(ApiError.badRequest('A quantidade de LCoins deve ser maior que 0,00'));
 
   const normalizedCoins = normalizeMoney(LCoins);
-  await usersRepository.addLCoins(userId, normalizedCoins);
+  await usersRepository.addLCoins(user.getId() as string, normalizedCoins);
 
   return res.status(200).json('LCoins adicionadas com sucesso');
 });
