@@ -1,16 +1,14 @@
-import { FormHandles } from '@unform/core'
 import { AxiosError } from 'axios'
 import { createContext, useState, useEffect } from 'react'
 import Api, { AxiosApi } from '../services/Api'
 import GetUser from '../services/GetUser'
-import normalizeMoney from '../services/normalizeMoney'
 
 
 interface IAuthContext {
-  user: IUser
-  signIn: (data: ILoginRequest) => Promise<void>
+  user: User
+  signIn: (data: LoginRequest) => Promise<void>
   logout: () => void
-  setUser: (user: IUser) => void;
+  setUser: (user: User) => void;
 }
 
 const AuthContext = createContext({} as IAuthContext)
@@ -29,7 +27,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     LCoins: 0
   }
 
-  const [user, setUser] = useState<IUser>(defaultUser)
+  const [user, setUser] = useState<User>(defaultUser)
 
   useEffect(() => {
     const loadingStorageData = async () => {
@@ -46,7 +44,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
           localStorage.clear()
           return
         }
-        const loggedUser = res as IUser
+        const loggedUser = res as User
         localStorage.setItem("@Auth:user", JSON.stringify(loggedUser))
         setUser(loggedUser)
         return
@@ -56,13 +54,13 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     loadingStorageData()
   }, [])
 
-  const signIn = async (data: ILoginRequest) => {
+  const signIn = async (data: LoginRequest) => {
     type TSignInResponse = { message: string, tokens: { refresh: string, acess: string } }
-    const { tokens } = await Api.post<ILoginRequest, TSignInResponse>('/user/login', data)
+    const { tokens } = await Api.post<LoginRequest, TSignInResponse>('/user/login', data)
     localStorage.setItem('@Auth:tokens', JSON.stringify(tokens))
     AxiosApi.defaults.headers['refreshtoken'] = tokens.refresh
     AxiosApi.defaults.headers['acesstoken'] = tokens.acess
-    const user = await GetUser() as IUser
+    const user = await GetUser() as User
     setUser(user)
   }
 
