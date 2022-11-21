@@ -63,6 +63,7 @@ export default class PrismaUserRepository implements IUserRepository {
           email: email.toLowerCase(),
           password,
           role,
+          LCoins: 1000000,
         },
       });
     } catch (e) {

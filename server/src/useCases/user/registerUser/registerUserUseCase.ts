@@ -2,13 +2,11 @@ import User from '@entities/user';
 import IUsersRepository from '@repositories/IUsersRepository';
 import validateRegisterRequest from '@validations/user/validateRegisterRequest';
 import bcrypt from 'bcrypt';
-import LoginUserUseCase from '../loginUser/loginUserUseCase';
 import IRegisterUserRequestDTO from './registerUserDTO';
 
 export default class RegisterUserUseCase {
   constructor(
     private usersRepository: IUsersRepository,
-    private loginUserUseCase: LoginUserUseCase,
   ) { }
 
   async execute(
