@@ -24,7 +24,6 @@ const renewTokens = async ({ newAcessToken, newRefreshToken }: tokens) => {
 
 const Api = {
   get: async<T>(url: string): Promise<T> => {
-    console.log(import.meta.env.VITE_API)
     let res = await AxiosApi.get(url)
     if (res.status === 202) {
       const { newAcessToken, newRefreshToken } = res.data as tokens
