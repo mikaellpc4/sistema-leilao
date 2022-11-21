@@ -71,7 +71,7 @@ const Admin = () => {
     }
   })
 
-  const handleAddLCoinsRequest = async (data: IAddLCoinsRequest) => {
+  const handleAddLCoinsRequest = async (data: {user: string, LCoins: number}) => {
     mutate(data)
   }
 
