@@ -4,7 +4,6 @@ import { auctionsRepository, tagsRepository, usersRepository } from '@config/rep
 import express from 'express';
 import { addBidController } from '@useCases/user/addBid';
 import isAuth from '@middlewares/isAuth';
-import prisma from 'services/database';
 import jwt from 'jsonwebtoken';
 
 const userRoutes = express.Router();
@@ -36,18 +35,9 @@ userRoutes.post('/user/logout', isAuth, async (req, res) => {
 userRoutes.get('/user/:id', async (req, res) => {
   const { id } = req.params;
   if (typeof id === 'string') {
-    const user = await prisma.users.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        name: true,
-        role: true,
-        LCoins: true,
-      },
-    });
+    const user = await usersRepository.getUserById(id);
     if (user) {
-      return res.status(200).json(user);
+      return res.status(200).json(user.getData());
     }
   }
   return res.status(404).json('Usuario não encontrado');

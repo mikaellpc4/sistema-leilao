@@ -3,7 +3,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import IUserRepository from '@repositories/IUsersRepository';
 import bcrypt from 'bcrypt';
 
-import prisma from 'services/database';
+import prisma from '@services/database';
 
 export default class PrismaUserRepository implements IUserRepository {
   async getUserById(id: string): Promise<User | null> {

@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import dayjs from 'dayjs';
-import normalizeMoney from 'services/normalizeMoney';
+import normalizeMoney from '@services/normalizeMoney';
 
 interface AuctionProps {
   id?: string;

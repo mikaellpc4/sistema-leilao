@@ -1,4 +1,4 @@
-import normalizeMoney from 'services/normalizeMoney';
+import normalizeMoney from '@services/normalizeMoney';
 import { TAddBidRequestDTO, TAddBidResponseDTO } from './addBidDTO';
 import AddBidUseCase from './addBidUseCase';
 

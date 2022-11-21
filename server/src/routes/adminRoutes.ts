@@ -6,7 +6,7 @@ import { finishAuctionController } from '@useCases/auction/finishAuction';
 import { createTagController } from '@useCases/tag/createTag';
 import { deleteTagController } from '@useCases/tag/deleteTag';
 import express from 'express';
-import normalizeMoney from 'services/normalizeMoney';
+import normalizeMoney from '@services/normalizeMoney';
 
 const adminRoutes = express.Router();
 

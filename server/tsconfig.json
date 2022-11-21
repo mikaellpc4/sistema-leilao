@@ -47,6 +47,9 @@
       "@repositories/*": [
         "repositories/*"
       ],
+      "@services/*": [
+        "services/*"
+      ],
       "@useCases/*": [
         "useCases/*"
       ],

@@ -4,7 +4,8 @@
   "description": "Servidor para o projeto de leilão",
   "main": "api.js",
   "scripts": {
-    "dev": "tsx watch src/api.ts"
+    "dev": "tsx watch src/api.ts",
+    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,11 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.2",
+    "@babel/node": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.18.6",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.14",
@@ -35,6 +41,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
+    "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^8.27.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-typescript": "^3.5.2",

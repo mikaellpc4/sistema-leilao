@@ -2,9 +2,7 @@ import Auction from '@entities/auction';
 import IAuctionsRepository from '@repositories/IAuctionsRepository';
 import dayjs from 'dayjs';
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@services/database';
 
 export default class PrismaAuctionsRepository implements IAuctionsRepository {
   async getAuctions(): Promise<Auction[]> {

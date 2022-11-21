@@ -1,9 +1,7 @@
 import Tag from '@entities/tag';
 import ITagRepository from '@repositories/ITagsRepository';
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@services/database';
 
 export default class PrismaTagsRepository implements ITagRepository {
   async getTagById(tagId: string): Promise<Tag | null> {

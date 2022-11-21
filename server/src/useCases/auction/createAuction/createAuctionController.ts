@@ -1,3 +1,4 @@
+import normalizeMoney from '@services/normalizeMoney';
 import ICreateAuctionRequestDTO from './createAuctionDTO';
 import CreateAuctionUseCase from './createAuctionUseCase';
 
@@ -19,7 +20,7 @@ export default class CreatAuctionController {
       name,
       imageLink,
       description,
-      minimumBid,
+      minimumBid: normalizeMoney(minimumBid),
       endAt,
       tagId,
     });
