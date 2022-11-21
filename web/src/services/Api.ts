@@ -1,7 +1,9 @@
-import axios, { Axios, AxiosError } from "axios"
+import axios from "axios"
+
+const baseURL = import.meta.env.VITE_API_URL
 
 export const AxiosApi = axios.create({
-  baseURL: 'http://localhost:3333'
+  baseURL
 })
 
 type tokens = { newAcessToken?: string, newRefreshToken?: string }
@@ -22,6 +24,7 @@ const renewTokens = async ({ newAcessToken, newRefreshToken }: tokens) => {
 
 const Api = {
   get: async<T>(url: string): Promise<T> => {
+    console.log(import.meta.env.VITE_API)
     let res = await AxiosApi.get(url)
     if (res.status === 202) {
       const { newAcessToken, newRefreshToken } = res.data as tokens

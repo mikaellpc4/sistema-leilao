@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT as string;
 
 app.use(cors({
-  origin: '*',
+  origin: process.env.FRONT_URL as string,
 }));
 
 app.use(express.json());
