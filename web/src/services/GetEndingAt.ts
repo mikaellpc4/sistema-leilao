@@ -25,6 +25,7 @@ const GetEndingAt = (endAt: number) => {
         break
     }
   })
+  endingAt.days = String(duration.years() * 360 + duration.months() * 30 + duration.days())
   return endingAt
 }
 

@@ -18,6 +18,9 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
     const args: Prisma.AuctionsFindManyArgs = {
       take,
       skip,
+      orderBy: {
+        endAt: 'desc',
+      },
       include: {
         buyer: {
           select: {

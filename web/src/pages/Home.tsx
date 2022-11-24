@@ -10,7 +10,7 @@ import { useInView } from 'react-intersection-observer'
 const Home = () => {
   const { ref, inView } = useInView()
   const { data, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery(['auctions'], async ({ pageParam = '' }) => {
-    const res = await Api.get<Auction[]>(`/auctions?limit=2&cursor=${pageParam}`)
+    const res = await Api.get<Auction[]>(`/auctions?limit=5&cursor=${pageParam}`)
     return res
   }, {
     getNextPageParam: (lastPage, data) => {
@@ -20,7 +20,7 @@ const Home = () => {
       }
       const lastAuction = lastPage[lastPage.length - 1]
       return lastAuction.props.id
-    }
+    }, staleTime: 1000 * 120 // 2 minute
   })
 
   useEffect(() => {
