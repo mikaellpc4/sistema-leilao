@@ -12,17 +12,18 @@ const Home = () => {
 
   const { ref, inView } = useInView()
 
+  interface AuctionsResponse {
+    auctions: Auction[],
+    nextAuction?: string
+  }
+
   const { data, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery(['auctions'], async ({ pageParam = '' }) => {
-    const res = await Api.get<Auction[]>(`/auctions?limit=5&cursor=${pageParam}`)
+    const res = await Api.get<AuctionsResponse>(`/auctions?limit=5&cursor=${pageParam}`)
     return res
   }, {
-    getNextPageParam: (lastPage, data) => {
-      const lastQuery = data[data.length - 1]
-      if (lastQuery.length === 0) {
-        return undefined
-      }
-      const lastAuction = lastPage[lastPage.length - 1]
-      return lastAuction.props.id
+    getNextPageParam: (_lastPage, pages) => {
+      const lastQuery = pages[pages.length - 1]
+      return lastQuery.nextAuction
     }, staleTime: 1000 * 120 // 2 minute
   })
 
@@ -49,7 +50,7 @@ const Home = () => {
             {data.pages.map((group, i) => {
               return (
                 <Fragment key={i}>
-                  {group
+                  {group.auctions
                     .filter((auction) => tagIdFilter === ''
                       ? auction
                       : auction.props.tagId.includes(tagIdFilter)

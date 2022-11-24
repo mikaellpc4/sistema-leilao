@@ -4,7 +4,7 @@ interface IAuctionsRepository {
   getAuctions(
     limit?: number,
     cursor?: string,
-  ): Promise<Auction[]>
+  ): Promise<{auctions: Auction[], nextAuction: string | undefined}>
   getAuctionById(id: string): Promise<Auction | null>
   auctionIsFinished(auctionId: string): Promise<boolean>
 

@@ -9,15 +9,13 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
   async getAuctions(
     limit?: number,
     cursor?: string,
-  ): Promise<Auction[]> {
-    const skip = cursor ? 1 : 0;
+  ): Promise<{ auctions: Auction[], nextAuction: string | undefined }> {
     let take: number | undefined;
     take = limit;
     if (!take) take = 5;
     if (take > 10) take = 10;
     const args: Prisma.AuctionsFindManyArgs = {
       take,
-      skip,
       orderBy: {
         endAt: 'desc',
       },
@@ -36,7 +34,23 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
       };
     }
     const auctions = await prisma.auctions.findMany(args);
-    return auctions.map((auction) => new Auction(auction));
+    const nextAuction = await prisma.auctions.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        endAt: {
+          lt: auctions[auctions.length - 1].endAt,
+        },
+      },
+      orderBy: {
+        endAt: 'desc',
+      },
+    });
+    return {
+      auctions: auctions.map((auction) => new Auction(auction)),
+      nextAuction: nextAuction?.id,
+    };
   }
 
   async getAuctionById(id: string): Promise<Auction | null> {
