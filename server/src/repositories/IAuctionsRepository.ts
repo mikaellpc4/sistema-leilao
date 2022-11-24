@@ -1,7 +1,10 @@
 import Auction from '@entities/auction';
 
 interface IAuctionsRepository {
-  getAuctions(): Promise<Auction[]>
+  getAuctions(
+    limit?: number,
+    cursor?: string,
+  ): Promise<Auction[]>
   getAuctionById(id: string): Promise<Auction | null>
   auctionIsFinished(auctionId: string): Promise<boolean>
 

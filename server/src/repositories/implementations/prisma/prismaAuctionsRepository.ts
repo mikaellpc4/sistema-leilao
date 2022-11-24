@@ -3,10 +3,21 @@ import IAuctionsRepository from '@repositories/IAuctionsRepository';
 import dayjs from 'dayjs';
 
 import prisma from '@services/database';
+import { Prisma } from '@prisma/client';
 
 export default class PrismaAuctionsRepository implements IAuctionsRepository {
-  async getAuctions(): Promise<Auction[]> {
-    const auctions = await prisma.auctions.findMany({
+  async getAuctions(
+    limit?: number,
+    cursor?: string,
+  ): Promise<Auction[]> {
+    const skip = cursor ? 1 : 0;
+    let take: number | undefined;
+    take = limit;
+    if (!take) take = 5;
+    if (take > 10) take = 10;
+    const args: Prisma.AuctionsFindManyArgs = {
+      take,
+      skip,
       include: {
         buyer: {
           select: {
@@ -15,7 +26,13 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
           },
         },
       },
-    });
+    };
+    if (cursor) {
+      args.cursor = {
+        id: cursor,
+      };
+    }
+    const auctions = await prisma.auctions.findMany(args);
     return auctions.map((auction) => new Auction(auction));
   }
 

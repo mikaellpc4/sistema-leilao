@@ -52,7 +52,11 @@ userRoutes.get('/authenticate', isAuth, async (req, res) => {
 });
 
 userRoutes.get('/auctions', async (req, res) => {
-  const auctions = await auctionsRepository.getAuctions();
+  const { cursor } = req.query;
+  const limit = Number(req.query.limit);
+  if (typeof cursor !== 'string' && typeof cursor !== 'undefined') return res.status(400).json('cursor invalido');
+  if (typeof limit !== 'number' && typeof limit !== 'undefined') return res.status(400).json('limite invalido');
+  const auctions = await auctionsRepository.getAuctions(limit, cursor);
   return res.status(200).json(auctions);
 });
 

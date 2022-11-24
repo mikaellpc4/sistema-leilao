@@ -31,8 +31,7 @@ const isAuth = async (req: Req, res: Res, next: Next) => {
         return res.status(401).json({ message: 'Sessão encerrada' });
       }
       case 'TokenExpiredError': {
-        const refreshSecret = process.env.REFRESH_SECRET as string;
-        const tokenData = jwt.verify(refreshToken, refreshSecret) as { userId: string };
+        const tokenData = jwt.decode(refreshToken) as { userId: string };
         const { userId } = tokenData;
         const findedUser = await usersRepository.getUserById(userId);
         if (findedUser?.getRefreshTokens()?.includes(refreshToken)) {

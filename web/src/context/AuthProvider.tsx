@@ -3,7 +3,6 @@ import { createContext, useState, useEffect } from 'react'
 import Api, { AxiosApi } from '../services/Api'
 import GetUser from '../services/GetUser'
 
-
 interface IAuthContext {
   user: User
   signIn: (data: LoginRequest) => Promise<void>
@@ -36,6 +35,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
       if(storagedUser) setUser(JSON.parse(storagedUser))
       if (storagedTokens) {
         let tokens = JSON.parse(storagedTokens) as { refresh: string, acess: string }
+        new Date(2011,12,)
         AxiosApi.defaults.headers['refreshtoken'] = tokens.refresh
         AxiosApi.defaults.headers['acesstoken'] = tokens.acess
         const res = await GetUser()
