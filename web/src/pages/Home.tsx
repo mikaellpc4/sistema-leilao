@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react'
+import { useEffect, Fragment, useState } from 'react'
 import AuctionCard from "../components/AuctionCard"
 import Carousel from "../components/Carousel"
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -8,7 +8,10 @@ import { useInView } from 'react-intersection-observer'
 
 
 const Home = () => {
+  const [tagIdFilter, setTagIdFilter] = useState('');
+
   const { ref, inView } = useInView()
+
   const { data, isError, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery(['auctions'], async ({ pageParam = '' }) => {
     const res = await Api.get<Auction[]>(`/auctions?limit=5&cursor=${pageParam}`)
     return res
@@ -33,7 +36,7 @@ const Home = () => {
 
   return (
     <div>
-      <Carousel />
+      <Carousel changeTag={setTagIdFilter} />
       <div className="px-3 py-6 flex flex-col gap-5">
         {!data
           ?
@@ -46,11 +49,16 @@ const Home = () => {
             {data.pages.map((group, i) => {
               return (
                 <Fragment key={i}>
-                  {group.map((auction) => {
-                    return (
-                      <AuctionCard key={auction.props.id} props={auction.props} />
+                  {group
+                    .filter((auction) => tagIdFilter === ''
+                      ? auction
+                      : auction.props.tagId.includes(tagIdFilter)
                     )
-                  })}
+                    .map((auction) => {
+                      return (
+                        <AuctionCard key={auction.props.id} props={auction.props} />
+                      )
+                    })}
                 </Fragment>
               )
             })

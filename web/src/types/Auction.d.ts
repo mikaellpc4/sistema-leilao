@@ -11,5 +11,6 @@ type Auction = {
     soldTo: string | null,
     createdAt: number,
     endAt: number,
+    tagId: string
   }
 }

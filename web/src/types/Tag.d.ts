@@ -1,7 +1,7 @@
 type Tag = {
   props: {
-    id: 'string',
-    name: 'string',
-    thumbnailLink: 'string'
+    id: string,
+    name: string,
+    thumbnailLink: string
   }
 }
