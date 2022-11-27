@@ -59,11 +59,11 @@ const AuctionCard = ({ props }: Auction) => {
 
   return (
     <div className="rounded-lg shadow-2xl border border-gray-200 w-auto pt-6">
-      <div className='flex items-center justify-center mb-3'>
+      <div className='flex items-center justify-center mb-3' onClick={() => isFinished(endingIn) ? '' : setModalOpen(true)}>
         <img className='' src={props.imageLink} />
       </div>
       <hr />
-      <div className="px-4">
+      <div className="px-4" onClick={() => isFinished(endingIn) ? '' : setModalOpen(true)}>
         <div className="flex flex-col gap-4">
           <span className="text-[12px] text-gray-500 self-end"> Data do leilão: {createdAt} </span>
           <h2 className="text-xl font-bold"> {props.name} </h2>
