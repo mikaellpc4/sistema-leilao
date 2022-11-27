@@ -28,7 +28,6 @@ export default class Auction {
       let finalProps = {
         ...props,
         id: v4(),
-        minimumBid: normalizeMoney(props.minimumBid),
         actualBid: null,
         soldFor: null,
         buyerId: null,

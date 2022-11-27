@@ -35,16 +35,15 @@ export default class PrismaAuctionsRepository implements IAuctionsRepository {
     }
     const auctions = await prisma.auctions.findMany(args);
     const nextAuction = await prisma.auctions.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        endAt: {
-          lt: auctions[auctions.length - 1].endAt,
-        },
+      skip: 1,
+      cursor: {
+        id: auctions[auctions.length - 1].id,
       },
       orderBy: {
         endAt: 'desc',
+      },
+      select: {
+        id: true,
       },
     });
     return {
