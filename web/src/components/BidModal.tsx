@@ -3,7 +3,7 @@ import { useState, useContext } from 'react'
 import AuthContext from '../context/AuthProvider'
 import { Navigate } from 'react-router-dom'
 import Api from '../services/Api'
-import { useMutation } from '@tanstack/react-query'
+import { InfiniteData, useMutation } from '@tanstack/react-query'
 import queryClient from '../services/queryClient'
 import { AxiosError } from 'axios'
 import normalizeMoney from '../services/normalizeMoney'
@@ -51,32 +51,48 @@ const BidModal = ({ isOpen, closeModal, auction }: IBidModal) => {
     newUserBalance: number
   }
 
+  interface AuctionsResponse {
+    auctions: Auction[],
+    nextAuction?: string
+  }
+
   const addBid = async (data: AddBidRequest) => {
     return Api.post<typeof data, TAddBidResponse>('/auction/bid', data)
   }
 
-  let prevAuctions: Auction[] | undefined
+  let prevQuery: InfiniteData<AuctionsResponse> | undefined
+
 
   const { error, isLoading, mutateAsync } = useMutation(addBid, {
     onSuccess(res) {
-      prevAuctions = queryClient.getQueryData<Auction[]>(['auctions'])
-      const newAuctions = prevAuctions?.map((item) => {
-        if (item.props.id === auction.id) {
-          return {
-            props: {
-              ...item.props,
-              actualBid: res.bidValue,
-              buyerId: user.id,
-              buyer: {
-                id: user.id,
-                name: user.name
+      prevQuery = queryClient.getQueryData(['auctions'])
+      if (prevQuery) {
+        const prevPages = prevQuery.pages
+        const newPages: AuctionsResponse[] = prevPages.map((page) => {
+          const newAuctions = page.auctions.map((prevAuction) => {
+            if (prevAuction.props.id === auction.id) {
+              return {
+                props: {
+                  ...prevAuction.props,
+                  actualBid: res.bidValue,
+                  buyerId: user.id,
+                  buyer: {
+                    id: user.id,
+                    name: user.name
+                  }
+                }
               }
             }
-          }
+            return prevAuction
+          })
+          return { ...page, auctions: newAuctions }
+        })
+        const newQuery = {
+          pages: newPages,
+          pageParams: prevQuery.pageParams
         }
-        return item
-      })
-      newAuctions && queryClient.setQueryData<Auction[]>(['auctions'], newAuctions)
+        queryClient.setQueryData<InfiniteData<AuctionsResponse> | undefined>(['auctions'], newQuery)
+      }
       setUser({
         ...user,
         LCoins: res.newUserBalance

@@ -43,15 +43,14 @@ const AuctionCard = ({ props }: Auction) => {
   useEffect(() => {
     if (props.buyer) {
       const fullBuyerName = props.buyer?.name.split(' ')
+      setBuyerName(props.buyer.name)
       if (fullBuyerName.length > 1) {
         setBuyerName(`${fullBuyerName[0]} ${fullBuyerName[1]}`)
       }
-      setBuyerName(props.buyer.name)
     }
+    setBidValue('')
     if (props.actualBid) {
       setBidValue(normalizeMoney(props.actualBid))
-    } else {
-      setBidValue('')
     }
     if (props.minimumBid) {
       setMinimumBidValue(normalizeMoney(props.minimumBid))
@@ -79,8 +78,8 @@ const AuctionCard = ({ props }: Auction) => {
               ? <span className='font-normal'> Leilão encerrado </span>
               :
               <>
-                <span className={`${parseInt(endingIn.days) <= 0 ? 'hidden' : ''} text-green-400 text-xl`}> {endingIn.days}D </span>
-                <span className="text-green-400 text-xl">
+                <span className={`${parseInt(endingIn.days) <= 0 ? 'hidden' : ''} text-green-400 text-lg`}> {endingIn.days}D </span>
+                <span className="text-green-400 text-lg">
                   {`${endingIn.hours}:${endingIn.minutes}:${endingIn.seconds}`}
                 </span>
               </>
@@ -92,9 +91,9 @@ const AuctionCard = ({ props }: Auction) => {
           {props.buyer !== null
             ?
             <>
-              <span className="text-purple-400 text-xl">
+              <span className="text-purple-400 text-md">
                 {buyerName}
-                <span className='text-yellow-400 text-lg'> {bidValue} </span>
+                <span className='text-yellow-400 text-md'> {bidValue} </span>
               </span>
             </>
             :

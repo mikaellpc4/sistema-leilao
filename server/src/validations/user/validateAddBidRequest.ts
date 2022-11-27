@@ -37,13 +37,13 @@ const validateAddBidRequest = async (
 
   const bids = await auctionsRepository.checkBids(auctionId);
 
-  if (bidValue < bids.minimumBid) {
-    next(ApiError.badRequest(`O lance deve ser maior ou igual a LC ${new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bids.minimumBid / 100)} `));
+  if (bidValue <= bids.actualBid) {
+    next(ApiError.badRequest('O lance deve ser maior que o lance anterior'));
     return false;
   }
 
-  if (bidValue <= bids.actualBid) {
-    next(ApiError.badRequest('O lance deve ser maior que o lance anterior'));
+  if (bidValue < bids.minimumBid) {
+    next(ApiError.badRequest(`O lance deve ser maior ou igual a LC ${new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bids.minimumBid / 100)} `));
     return false;
   }
 

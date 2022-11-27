@@ -51,9 +51,10 @@ const Home = () => {
               return (
                 <Fragment key={i}>
                   {group.auctions
-                    .filter((auction) => tagIdFilter === ''
-                      ? auction
-                      : auction.props.tagId.includes(tagIdFilter)
+                    .filter((auction) =>
+                      tagIdFilter === ''
+                        ? auction
+                        : auction.props.tagId.includes(tagIdFilter)
                     )
                     .map((auction) => {
                       return (
