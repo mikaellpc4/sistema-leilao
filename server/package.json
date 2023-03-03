@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Servidor para o projeto de leilão",
   "main": "api.js",
+  "engine": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev": "tsx watch src/api.ts",
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
