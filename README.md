@@ -11,4 +11,4 @@
 - Prisma ORM
 - JWT
 
-Link para o projeto funcionando: https://sistema-leilao.vercel.app/
+Link para o deploy do projeto: https://sistema-leilao.vercel.app/
